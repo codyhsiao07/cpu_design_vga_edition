@@ -1,0 +1,7 @@
+# Normalize line endings for repository
+*.v   text eol=lf
+*.sv  text eol=lf
+*.vh  text eol=lf
+*.txt text eol=lf
+*.md  text eol=lf
+
