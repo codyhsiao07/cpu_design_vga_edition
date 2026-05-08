@@ -143,7 +143,8 @@ module l2_arb_tb;
     input [26:0] a;
     reg [31:0] base_word;
     begin
-      base_word = {4'b0, a} << 2; // app_addr * 4 words
+      // L2 drives MIG app_addr in byte-domain; convert byte offset to word index.
+      base_word = {7'b0, a[26:2]};
       gen_rd_data = {base_word + 32'd3, base_word + 32'd2, base_word + 32'd1, base_word};
     end
   endfunction

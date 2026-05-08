@@ -59,6 +59,7 @@ module i_cache
     // ----------------------------
     localparam LINE_BITS = LINE_BYTES * 8;
     localparam NUM_SETS  = (CACHE_BYTES / (LINE_BYTES * NUM_WAYS)); // 512
+    localparam [31:0] INSTR_NOP = 32'h0000_0013;
 
     // ----------------------------
     // Cache arrays (simple reg arrays)
@@ -139,8 +140,18 @@ module i_cache
                 4'd13: pick_word32 = line[447:416];
                 4'd14: pick_word32 = line[479:448];
                 4'd15: pick_word32 = line[511:480];
-                default: pick_word32 = 32'h0000_0013; // NOP (ADDI x0,x0,0) as safe default
+                default: pick_word32 = INSTR_NOP; // NOP (ADDI x0,x0,0) as safe default
             endcase
+        end
+    endfunction
+
+    function [31:0] pick_uc_word32;
+        input [L2_DATA_W-1:0] beat;
+        input [ADDR_WIDTH-1:0] pc;
+        begin
+            // L2 UC_READ returns the 8-byte beat containing PC. Select the
+            // correct 32-bit instruction word inside that beat.
+            pick_uc_word32 = pc[2] ? beat[63:32] : beat[31:0];
         end
     endfunction
 
@@ -164,6 +175,7 @@ module i_cache
     localparam ST_REPLAY1    = 3'd4;
     localparam ST_REPLAY2    = 3'd5;
     localparam ST_FLUSH      = 3'd6;
+    localparam ST_DRAIN_ERR  = 3'd7;
 
     reg [2:0] state;
 
@@ -443,11 +455,12 @@ module i_cache
                         if (l2_rsp_err)
                             refill_err_q <= 1'b1;
                         if (miss_uncached) begin
-                            // UC_READ: use low 32 bits
+                            // UC_READ: select the correct word in the returned 8B beat.
                             if (!((miss_kill_tag) != kill_toggle)) begin
                                 if_resp_valid <= 1'b1;
                                 if_resp_pc    <= miss_pc;
-                                if_resp_inst  <= l2_rsp_data[31:0];
+                                if_resp_inst  <= l2_rsp_err ? INSTR_NOP :
+                                                 pick_uc_word32(l2_rsp_data, miss_pc);
                                 if_resp_err   <= l2_rsp_err;
                             end
                             l2_rsp_ready <= 1'b0;
@@ -466,13 +479,50 @@ module i_cache
                                 default: refill_buf <= refill_buf;
                             endcase
 
-                            if (l2_rsp_last) begin
+                            if (l2_rsp_err) begin
+                                // Do not install a failed or short line fill into I$.
+                                // Return a safe instruction with if_resp_err asserted.
+                                refill_err_q <= 1'b1;
+                                if (!((miss_kill_tag) != kill_toggle)) begin
+                                    if_resp_valid <= 1'b1;
+                                    if_resp_pc    <= miss_pc;
+                                    if_resp_inst  <= INSTR_NOP;
+                                    if_resp_err   <= 1'b1;
+                                end
+                                if (l2_rsp_last) begin
+                                    l2_rsp_ready <= 1'b0;
+                                    state <= ST_IDLE;
+                                end else begin
+                                    l2_rsp_ready <= 1'b1;
+                                    state <= ST_DRAIN_ERR;
+                                end
+                            end else if (l2_rsp_last && (refill_beat_cnt != 4'd7)) begin
+                                // Do not install a failed or short line fill into I$.
+                                // Return a safe instruction with if_resp_err asserted.
+                                refill_err_q <= 1'b1;
+                                if (!((miss_kill_tag) != kill_toggle)) begin
+                                    if_resp_valid <= 1'b1;
+                                    if_resp_pc    <= miss_pc;
+                                    if_resp_inst  <= INSTR_NOP;
+                                    if_resp_err   <= 1'b1;
+                                end
+                                l2_rsp_ready <= 1'b0;
+                                state <= ST_IDLE;
+                            end else if (l2_rsp_last) begin
                                 l2_rsp_ready <= 1'b0;
                                 state <= ST_WRITE_LINE;
                             end else begin
                                 refill_beat_cnt <= refill_beat_cnt + 4'd1;
                             end
                         end
+                    end
+                end
+
+                ST_DRAIN_ERR: begin
+                    l2_rsp_ready <= 1'b1;
+                    if (l2_rsp_valid && l2_rsp_ready && l2_rsp_last) begin
+                        l2_rsp_ready <= 1'b0;
+                        state <= ST_IDLE;
                     end
                 end
 
@@ -533,7 +583,7 @@ module i_cache
                         // unexpected: treat as error / or retry
                         if_resp_valid <= 1'b1;
                         if_resp_pc    <= s2_pc;
-                        if_resp_inst  <= 32'h0000_0013;
+                        if_resp_inst  <= INSTR_NOP;
                         if_resp_err   <= 1'b1;
                     end
                     s2_valid <= 1'b0;
@@ -565,9 +615,6 @@ module i_cache
     end
 
 endmodule
-
-
-
 
 
 

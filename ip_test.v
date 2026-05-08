@@ -623,6 +623,13 @@ function integer clogb2 (input integer size);
   wire                                  vio_data_mask_gen;
 
   wire                                  vio_tg_rst;
+  wire                                  po_win_tg_rst;
+  wire                                  manual_clear_error;
+  wire                                  dbg_clear_error;
+  wire                                  wdt_en_w;
+  wire                                  cmd_wdt_err_w;
+  wire                                  wr_wdt_err_w;
+  wire                                  rd_wdt_err_w;
 
   wire                                  vio_dbg_sel_pi_incdec;
 
@@ -1043,7 +1050,6 @@ function integer clogb2 (input integer size);
 
 
 endmodule
-
 
 
 

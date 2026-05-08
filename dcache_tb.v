@@ -884,7 +884,7 @@ module dcache_tb;
         trace_dump();
         $fatal(1, "Err mismatch: addr=%h exp=%b got=%b", addr, exp_err, cpu_rsp_err);
       end
-      if (cpu_rsp_rdata !== exp_data) begin
+      if (!exp_err && (cpu_rsp_rdata !== exp_data)) begin
         trace_dump();
         $fatal(1, "Data mismatch: addr=%h exp=%h got=%h", addr, exp_data, cpu_rsp_rdata);
       end
@@ -940,7 +940,7 @@ module dcache_tb;
         $fatal(1, "cpu_rsp_valid should hold while ready is low");
       if (cpu_rsp_err !== exp_err)
         $fatal(1, "Err mismatch (bp): addr=%h exp=%b got=%b", addr, exp_err, cpu_rsp_err);
-      if (cpu_rsp_rdata !== exp_data)
+      if (!exp_err && (cpu_rsp_rdata !== exp_data))
         $fatal(1, "Data mismatch (bp): addr=%h exp=%h got=%h", addr, exp_data, cpu_rsp_rdata);
       cpu_rsp_ready <= 1'b1;
       @(posedge clk);

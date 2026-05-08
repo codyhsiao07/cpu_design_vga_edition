@@ -43,7 +43,9 @@ module icache_tb;
   reg                   l2_rsp_last;
   reg                   l2_rsp_err;
   reg                   l2_err_once;
+  reg                   l2_err_last_once;
   reg                   pending_err;
+  reg                   pending_err_last;
 
   // DUT
   i_cache #(
@@ -119,6 +121,15 @@ module icache_tb;
     end
   endfunction
 
+  function [63:0] make_uc_beat;
+    input [31:0] addr;
+    reg [31:0] base;
+    begin
+      base = {addr[31:3], 3'b000};
+      make_uc_beat = {mem_word(base + 32'd4), mem_word(base)};
+    end
+  endfunction
+
   function [8:0] addr_index;
     input [31:0] addr;
     begin
@@ -147,7 +158,9 @@ module icache_tb;
       l2_rsp_last <= 1'b0;
       l2_rsp_err <= 1'b0;
       l2_err_once <= 1'b0;
+      l2_err_last_once <= 1'b1;
       pending_err <= 1'b0;
+      pending_err_last <= 1'b1;
       req_stall_cnt <= 0;
       req_accept_cnt <= 0;
       linefill_cnt <= 0;
@@ -165,7 +178,9 @@ module icache_tb;
         pending_beat <= 4'd0;
         pending_delay <= pending_delay; // keep current delay
         pending_err <= l2_err_once;
+        pending_err_last <= l2_err_last_once;
         l2_err_once <= 1'b0;
+        l2_err_last_once <= 1'b1;
         if (l2_req_cmd == 2'b01)
           uc_cnt <= uc_cnt + 1;
         else
@@ -185,8 +200,22 @@ module icache_tb;
           if (!l2_rsp_valid || (l2_rsp_valid && l2_rsp_ready)) begin
             l2_rsp_valid <= 1'b1;
             l2_rsp_err <= pending_err;
-            if (pending_uc) begin
-              l2_rsp_data <= {32'h0, mem_word(pending_addr)};
+            if (pending_err) begin
+              l2_rsp_data <= 64'h0;
+              l2_rsp_last <= pending_err_last || pending_uc || (pending_beat == 4'd7);
+              if (l2_rsp_ready) begin
+                if (pending_err_last || pending_uc || (pending_beat == 4'd7)) begin
+                  pending <= 1'b0;
+                  pending_err <= 1'b0;
+                  pending_err_last <= 1'b1;
+                end else begin
+                  pending_err <= 1'b0;
+                  pending_err_last <= 1'b1;
+                  pending_beat <= pending_beat + 1'b1;
+                end
+              end
+            end else if (pending_uc) begin
+              l2_rsp_data <= make_uc_beat(pending_addr);
               l2_rsp_last <= 1'b1;
               if (l2_rsp_ready) begin
                 pending <= 1'b0;
@@ -282,6 +311,13 @@ module icache_tb;
     input [31:0] addr;
     begin
       do_fetch(addr, mem_word(addr), 1'b1, 1'b1);
+    end
+  endtask
+
+  task do_fetch_expect_nop_err;
+    input [31:0] addr;
+    begin
+      do_fetch(addr, 32'h0000_0013, 1'b1, 1'b1);
     end
   endtask
 
@@ -426,12 +462,28 @@ module icache_tb;
 
     // Test 9: L2 response error propagates on UC_READ
     l2_err_once = 1'b1;
-    do_fetch_expect_err(32'h8000_8000);
+    do_fetch_expect_nop_err(32'h8000_8000);
 
     // Test 10: L2 response error propagates on cached miss
     do_flush_all();
     l2_err_once = 1'b1;
-    do_fetch_expect_err(32'h0000_A000);
+    do_fetch_expect_nop_err(32'h0000_A000);
+    linefill_cnt = 0;
+    do_fetch_ok(32'h0000_A000);
+    if (linefill_cnt == 0) begin
+      $fatal(1, "Expected retry linefill after errored cached miss");
+    end
+
+    // Test 10b: errored line refill with remaining beats must be drained.
+    do_flush_all();
+    l2_err_once = 1'b1;
+    l2_err_last_once = 1'b0;
+    do_fetch_expect_nop_err(32'h0000_A100);
+    wait_cycles(20);
+    if (pending) begin
+      $fatal(1, "I$ did not drain remaining beats after non-last refill error");
+    end
+    do_fetch_ok(32'h0000_A100);
 
     // Test 11: rsp backpressure during line fill
     if_resp_ready = 1'b1;

@@ -13,7 +13,7 @@ _start:
     la   t1, __bss_end
     li   t2, 0
 1:
-    bgeu t0, t1, 2f
+    bgeu t0, t1, 2f //清理bass
     sw   t2, 0(t0)
     addi t0, t0, 4
     jal  x0, 1b

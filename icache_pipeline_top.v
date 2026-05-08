@@ -222,6 +222,13 @@ module icache_pipeline_top #(
   wire        boot_memtest1_ok_int;
   wire        boot_memtest2_ok_int;
   wire        boot_memtest3_ok_int;
+  wire        boot_memtest_pass_raw;
+  wire        boot_memtest_done_raw;
+  wire        boot_memtest_rd_seen_raw;
+  wire        boot_memtest0_ok_raw;
+  wire        boot_memtest1_ok_raw;
+  wire        boot_memtest2_ok_raw;
+  wire        boot_memtest3_ok_raw;
   wire        vga_hsync_w;
   wire        vga_vsync_w;
   wire [3:0]  vga_red_w;
@@ -455,14 +462,22 @@ module icache_pipeline_top #(
         .app_rd_data_valid (app_rd_data_valid),
         .app_rdy         (app_rdy),
         .app_wdf_rdy     (app_wdf_rdy),
-        .done_o          (boot_memtest_done_int),
-        .pass_o          (boot_memtest_pass_int),
-        .rd_seen_o       (boot_memtest_rd_seen_int),
-        .beat0_ok_o      (boot_memtest0_ok_int),
-        .beat1_ok_o      (boot_memtest1_ok_int),
-        .beat2_ok_o      (boot_memtest2_ok_int),
-        .beat3_ok_o      (boot_memtest3_ok_int)
+        .done_o          (boot_memtest_done_raw),
+        .pass_o          (boot_memtest_pass_raw),
+        .rd_seen_o       (boot_memtest_rd_seen_raw),
+        .beat0_ok_o      (boot_memtest0_ok_raw),
+        .beat1_ok_o      (boot_memtest1_ok_raw),
+        .beat2_ok_o      (boot_memtest2_ok_raw),
+        .beat3_ok_o      (boot_memtest3_ok_raw)
       );
+
+      assign boot_memtest_pass_int    = UART_BOOT_EN ? boot_memtest_pass_raw    : 1'b1;
+      assign boot_memtest_done_int    = UART_BOOT_EN ? boot_memtest_done_raw    : 1'b1;
+      assign boot_memtest_rd_seen_int = UART_BOOT_EN ? boot_memtest_rd_seen_raw : 1'b0;
+      assign boot_memtest0_ok_int     = UART_BOOT_EN ? boot_memtest0_ok_raw     : 1'b1;
+      assign boot_memtest1_ok_int     = UART_BOOT_EN ? boot_memtest1_ok_raw     : 1'b1;
+      assign boot_memtest2_ok_int     = UART_BOOT_EN ? boot_memtest2_ok_raw     : 1'b1;
+      assign boot_memtest3_ok_int     = UART_BOOT_EN ? boot_memtest3_ok_raw     : 1'b1;
 
       assign memtest_active_w = init_calib_complete && ~boot_memtest_done_int;
 
@@ -550,13 +565,6 @@ module icache_pipeline_top #(
         assign boot_verify0_memtest0_ok_int = 1'b0;
         assign boot_verify_req_seen_int = 1'b0;
         assign boot_verify_rsp_seen_int = 1'b0;
-        assign boot_memtest_pass_int = 1'b1;
-        assign boot_memtest_done_int = 1'b1;
-        assign boot_memtest_rd_seen_int = 1'b0;
-        assign boot_memtest0_ok_int = 1'b1;
-        assign boot_memtest1_ok_int = 1'b1;
-        assign boot_memtest2_ok_int = 1'b1;
-        assign boot_memtest3_ok_int = 1'b1;
       end
 
       // MIG app mux: memtest first, then bootloader, then L2.

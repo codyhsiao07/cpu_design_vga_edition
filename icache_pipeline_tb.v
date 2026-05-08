@@ -75,6 +75,7 @@ module icache_pipeline_tb;
     .ADDR_WIDTH (ADDR_WIDTH),
     .L2_DATA_W  (L2_DATA_W),
     .USE_MIG    (USE_MIG),
+    .BOOT_RELEASE_CYCLES(1),
     .RESET_PC   (RESET_PC)
   ) dut (
     .clk          (clk),
@@ -1560,7 +1561,7 @@ endmodule
 
 // ----------------------------------------------------------------------------
 // Simplified MIG model for simulation (used by MIG_DDR2_interface wrapper).
-// - app_addr is 16-byte aligned address (addr[31:4])
+// - app_addr is a byte-domain DDR offset. Accepted commands are 16-byte aligned.
 // - app_cmd: 3'b001 read, 3'b000 write
 // - app_wdf_mask: 1=mask (no write), 0=write
 // - Fixed 2-cycle read latency, always-ready interface
@@ -1767,7 +1768,7 @@ module mig_7series_0_mig (
 
   // Use sys_clk_i as UI clock
   assign ui_clk = sys_clk_i;
-  assign init_calib_complete = ~sys_rst;
+  assign init_calib_complete = sys_rst;
 
   initial begin
     // Wait one tick so top TB can finish its own TEST/MEMFILE selection.
@@ -1915,24 +1916,24 @@ module mig_7series_0_mig (
   end
 
   function [127:0] rd128;
-    input [26:0] a16;
+    input [26:0] a_byte;
     integer i;
     reg [31:0] base;
     begin
-      base = {a16, 4'b0};
+      base = {5'b0, a_byte};
       for (i = 0; i < 16; i = i + 1)
         rd128[i*8 +: 8] = mem_b[base + i];
     end
   endfunction
 
   task wr128;
-    input [26:0] a16;
+    input [26:0] a_byte;
     input [127:0] data;
     input [15:0] mask;
     integer i;
     reg [31:0] base;
     begin
-      base = {a16, 4'b0};
+      base = {5'b0, a_byte};
       for (i = 0; i < 16; i = i + 1) begin
         if (!mask[i])
           mem_b[base + i] = data[i*8 +: 8];
@@ -1943,8 +1944,8 @@ module mig_7series_0_mig (
   reg [26:0] rd_addr_d0, rd_addr_d1;
   reg        rd_valid_d0, rd_valid_d1;
 
-  always @(posedge ui_clk or posedge sys_rst) begin
-    if (sys_rst) begin
+  always @(posedge ui_clk or negedge sys_rst) begin
+    if (!sys_rst) begin
       app_rdy          <= 1'b0;
       app_wdf_rdy      <= 1'b0;
       app_rd_data_valid<= 1'b0;

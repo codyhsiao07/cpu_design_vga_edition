@@ -113,7 +113,8 @@ module dcache_blocking
         S_REFILL_COMMIT = 4'd9, // write line into cache 把 refill buffer 寫入 cache line（含 tag/valid 等）。
 
         S_UC_REQ        = 4'd10, // issue UC_RD/UC_WR request 發起 uncacheable 讀/寫請求（不進 cache）
-        S_UC_WAIT       = 4'd11  // wait for UC response (1 beat) 等待 uncacheable 回覆（通常 1 beat）
+        S_UC_WAIT       = 4'd11, // wait for UC response (1 beat) 等待 uncacheable 回覆（通常 1 beat）
+        S_REFILL_DRAIN_ERR = 4'd12 // drain remaining refill beats after an error
     ;
 
     reg [3:0] state;
@@ -265,10 +266,8 @@ module dcache_blocking
     assign cpu_req_ready = (state == S_IDLE);
     assign l2_rsp_ready  = (state == S_WB_WAIT) ||
                            (state == S_REFILL_RECV) ||
-                           (state == S_UC_WAIT) ||
-                           ((state == S_REFILL_REQ) && l2_req_ready) ||
-                           ((state == S_UC_REQ) && l2_req_ready) ||
-                           ((state == S_WB_STREAM) && l2_req_ready && (beat_cnt_r == 3'd7));
+                           (state == S_REFILL_DRAIN_ERR) ||
+                           (state == S_UC_WAIT);
     // ---------------- Main sequential logic ----------------
     integer i;
     always @(posedge clk) begin
@@ -498,13 +497,18 @@ module dcache_blocking
                     if (l2_rsp_valid && l2_rsp_ready) begin
                         refill_line_r <= line_set_beat64(refill_line_r, beat_cnt_r, l2_rsp_rdata);
                         // L2 may terminate early on error (single-beat ERR_RSP).
-                        // Treat any early-last/error as transaction failure and
-                        // return an error response instead of waiting forever.
+                        // Treat an error as transaction failure, but keep draining
+                        // until last so leftover beats cannot corrupt the next miss.
                         if (l2_rsp_err) begin
                             cpu_rsp_rdata <= {CPU_DATA_W{1'b0}};
                             cpu_rsp_err   <= 1'b1 | wb_err_r;
-                            cpu_rsp_valid <= 1'b1;
-                            state <= S_RESP;
+                            if (l2_rsp_last) begin
+                                cpu_rsp_valid <= 1'b1;
+                                state <= S_RESP;
+                            end else begin
+                                cpu_rsp_valid <= 1'b0;
+                                state <= S_REFILL_DRAIN_ERR;
+                            end
                         end else if (l2_rsp_last) begin
                             if (beat_cnt_r == 3'd7) begin
                                 state <= S_REFILL_COMMIT;
@@ -517,6 +521,17 @@ module dcache_blocking
                             end
                         end else begin
                             beat_cnt_r <= beat_cnt_r + 3'd1;
+                        end
+                    end
+                end
+
+                S_REFILL_DRAIN_ERR: begin
+                    if (l2_rsp_valid && l2_rsp_ready) begin
+                        if (l2_rsp_last) begin
+                            cpu_rsp_rdata <= {CPU_DATA_W{1'b0}};
+                            cpu_rsp_err   <= 1'b1 | wb_err_r;
+                            cpu_rsp_valid <= 1'b1;
+                            state <= S_RESP;
                         end
                     end
                 end
