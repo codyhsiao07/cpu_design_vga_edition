@@ -955,6 +955,15 @@ module icache_pipeline_tb;
         require_linefill = 1'b0;
         max_cycles = 150000;
       end
+      29: begin
+        // Independent full-system stress with RV32M, JALR, signed byte/half
+        // accesses, and cache-line boundary traffic.
+        memfile = "TEST_FILES/mem_test29_independent_system_stress.mem";
+        expect_rd = 5'd10;
+        expect_val = 32'h2900C0DE;
+        require_linefill = 1'b0;
+        max_cycles = 300000;
+      end
       default: begin
       end
     endcase
@@ -1835,6 +1844,7 @@ module mig_7series_0_mig (
           25: begin memfile = "TEST_FILES/mem_test25_all_instr_stress.mem"; memfile_base = "mem_test25_all_instr_stress.mem"; end
           26: begin memfile = "TEST_FILES/mem_test26_mixed_stress.mem";    memfile_base = "mem_test26_mixed_stress.mem"; end
           27: begin memfile = "TEST_FILES/mem_test27_full_system_stress.mem"; memfile_base = "mem_test27_full_system_stress.mem"; end
+          29: begin memfile = "TEST_FILES/mem_test29_independent_system_stress.mem"; memfile_base = "mem_test29_independent_system_stress.mem"; end
           default: begin memfile = "program_ddr.mem"; memfile_base = "program_ddr.mem"; end
         endcase
       end else begin
@@ -1893,6 +1903,16 @@ module mig_7series_0_mig (
           try_mig_candidate("../../../../TEST_FILES/mem_test27_full_system_stress.mem", memfile_found);
           try_mig_candidate("../../../../../TEST_FILES/mem_test27_full_system_stress.mem", memfile_found);
           try_mig_candidate("../../../../../../TEST_FILES/mem_test27_full_system_stress.mem", memfile_found);
+        end
+        29: begin
+          try_mig_candidate("TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("./TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../../../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../../../../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../../../../../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
+          try_mig_candidate("../../../../../../TEST_FILES/mem_test29_independent_system_stress.mem", memfile_found);
         end
         default: begin
         end

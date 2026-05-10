@@ -1,0 +1,21 @@
+# Local build outputs
+build*/
+release_assets/
+*.out
+*.vcd
+*.log
+*.trace
+*.cov
+*.elf
+*.bin
+*.map
+*.dis
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Large local toolchain payload.
+# Keep only the README placeholder in Git; publish the archive via GitHub Releases.
+toolchain/*
+!toolchain/README.md

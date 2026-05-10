@@ -6,8 +6,16 @@
 #   make run-sim
 #   make clean
 
-CC_PREFIX       ?= C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv64-unknown-elf-
-BINUTILS_PREFIX ?= C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-
+LOCAL_TOOLCHAIN_BIN ?= toolchain/xpack-riscv-none-elf-gcc/bin
+DEFAULT_TOOLCHAIN_BIN ?= C:/riscv/xpack-riscv-none-elf-gcc/bin
+ifneq ($(wildcard $(LOCAL_TOOLCHAIN_BIN)/riscv64-unknown-elf-gcc*),)
+TOOLCHAIN_BIN ?= $(LOCAL_TOOLCHAIN_BIN)
+else
+TOOLCHAIN_BIN ?= $(DEFAULT_TOOLCHAIN_BIN)
+endif
+
+CC_PREFIX       ?= $(TOOLCHAIN_BIN)/riscv64-unknown-elf-
+BINUTILS_PREFIX ?= $(TOOLCHAIN_BIN)/riscv-none-elf-
 CC       := $(CC_PREFIX)gcc
 OBJCOPY  := $(BINUTILS_PREFIX)objcopy
 OBJDUMP  := $(BINUTILS_PREFIX)objdump
@@ -44,7 +52,7 @@ ELF      := $(BUILD_DIR)/$(OUT_NAME).elf
 BIN      := $(BUILD_DIR)/$(OUT_NAME).bin
 DISASM   := $(BUILD_DIR)/$(OUT_NAME).dis
 
-.PHONY: help all check-tools print-config elf bin mem games-menu vga-games-menu tetris-vga gomoku-vga breakout-vga snake-vga mines-vga bomber-vga sokoban-vga pacman-vga chess-vga disasm run-sim uart-mmio-tb vga-subsystem-tb clean
+.PHONY: help all check-tools print-config elf bin mem games-menu vga-games-menu tetris-vga gomoku-vga breakout-vga snake-vga mines-vga bomber-vga sokoban-vga pacman-vga chess-vga test29-independent-stress disasm run-sim uart-mmio-tb vga-subsystem-tb clean
 
 .DEFAULT_GOAL := all
 
@@ -65,6 +73,7 @@ help:
 	@echo "  make sokoban-vga  : build TEST_FILES/mem_sokoban_vga.mem"
 	@echo "  make pacman-vga   : build TEST_FILES/mem_pacman_vga.mem"
 	@echo "  make chess-vga    : build TEST_FILES/mem_chess_vga.mem"
+	@echo "  make test29-independent-stress : build TEST_FILES/mem_test29_independent_system_stress.mem"
 	@echo "  make disasm       : generate disassembly ($(DISASM))"
 	@echo "  make run-sim      : run main TB with +MEMFILE=$(MEM_OUT)"
 	@echo "  make uart-mmio-tb : run dedicated UART MMIO regression TB"
@@ -78,8 +87,10 @@ help:
 	@echo "  OUT_NAME=game"
 	@echo "  MEM_OUT=TEST_FILES/mem_game.mem"
 	@echo "  APP_DEFINES=-DGAME_USE_UART"
-	@echo "  CC_PREFIX=C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv64-unknown-elf-"
-	@echo "  BINUTILS_PREFIX=C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-"
+	@echo "  LOCAL_TOOLCHAIN_BIN=toolchain/xpack-riscv-none-elf-gcc/bin"
+	@echo "  TOOLCHAIN_BIN=$(TOOLCHAIN_BIN)"
+	@echo "  CC_PREFIX=$(CC_PREFIX)"
+	@echo "  BINUTILS_PREFIX=$(BINUTILS_PREFIX)"
 	@echo "  PYTHON=python"
 
 all: mem
@@ -100,6 +111,8 @@ print-config:
 	@echo "MEM_OUT=$(MEM_OUT)"
 	@echo "APP_DEFINES=$(APP_DEFINES)"
 	@echo "ARCH=$(ARCH)"
+	@echo "LOCAL_TOOLCHAIN_BIN=$(LOCAL_TOOLCHAIN_BIN)"
+	@echo "TOOLCHAIN_BIN=$(TOOLCHAIN_BIN)"
 	@echo "CC_PREFIX=$(CC_PREFIX)"
 	@echo "BINUTILS_PREFIX=$(BINUTILS_PREFIX)"
 	@echo "SIM_EXE=$(SIM_EXE)"
@@ -176,6 +189,9 @@ pacman-vga:
 
 chess-vga:
 	$(MAKE) GAME_DIR=$(GAME_DIR) SRC=$(GAME_DIR)/Chess_vga.c EXTRA_SRCS="$(TETRIS_VGA_EXTRA_SRCS)" OUT_NAME=chess_vga MEM_OUT=TEST_FILES/mem_chess_vga.mem mem
+
+test29-independent-stress:
+	$(MAKE) SRC=TEST_FILES/prog_test29_independent_system_stress.c OUT_NAME=test29_independent_system_stress MEM_OUT=TEST_FILES/mem_test29_independent_system_stress.mem APP_DEFINES= mem
 
 $(DISASM): $(ELF)
 	$(OBJDUMP) -D $< > $@

@@ -1,7 +1,7 @@
 param(
   [string]$OutDir = "build_game_rv32im_audit",
   [string]$MakeExe = "make",
-  [string]$Objdump = "C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-objdump"
+  [string]$Objdump = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -9,6 +9,15 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $RepoRoot
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
+
+if ([string]::IsNullOrWhiteSpace($Objdump)) {
+  $LocalToolchainBin = Join-Path $RepoRoot "toolchain\xpack-riscv-none-elf-gcc\bin"
+  if (Test-Path $LocalToolchainBin) {
+    $Objdump = Join-Path $LocalToolchainBin "riscv-none-elf-objdump"
+  } else {
+    $Objdump = "C:\riscv\xpack-riscv-none-elf-gcc\bin\riscv-none-elf-objdump"
+  }
+}
 
 $games = @(
   @{ Target = "tetris-vga";   Name = "tetris_vga";   Elf = "build_os/tetris_vga.elf";   Mem = "TEST_FILES/mem_tetris_vga.mem" },

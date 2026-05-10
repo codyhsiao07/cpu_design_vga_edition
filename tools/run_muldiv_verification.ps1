@@ -2,9 +2,9 @@ param(
   [string]$OutDir = "build_muldiv_verification",
   [string]$Iverilog = "C:/iverilog/bin/iverilog.exe",
   [string]$Vvp = "vvp",
-  [string]$Gcc = "C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv64-unknown-elf-gcc",
-  [string]$Objcopy = "C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-objcopy",
-  [string]$Objdump = "C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-objdump",
+  [string]$Gcc = "",
+  [string]$Objcopy = "",
+  [string]$Objdump = "",
   [string]$PythonExe = "python"
 )
 
@@ -13,6 +13,22 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $RepoRoot
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
+
+$LocalToolchainBin = Join-Path $RepoRoot "toolchain\xpack-riscv-none-elf-gcc\bin"
+if (Test-Path $LocalToolchainBin) {
+  $DefaultToolchainBin = $LocalToolchainBin
+} else {
+  $DefaultToolchainBin = "C:\riscv\xpack-riscv-none-elf-gcc\bin"
+}
+if ([string]::IsNullOrWhiteSpace($Gcc)) {
+  $Gcc = Join-Path $DefaultToolchainBin "riscv64-unknown-elf-gcc"
+}
+if ([string]::IsNullOrWhiteSpace($Objcopy)) {
+  $Objcopy = Join-Path $DefaultToolchainBin "riscv-none-elf-objcopy"
+}
+if ([string]::IsNullOrWhiteSpace($Objdump)) {
+  $Objdump = Join-Path $DefaultToolchainBin "riscv-none-elf-objdump"
+}
 
 function Get-VerilogSources {
   return @(Get-ChildItem -Name *.v)

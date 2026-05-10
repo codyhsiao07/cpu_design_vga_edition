@@ -57,6 +57,11 @@
 - `MEM_OUT=TEST_FILES/mem_game.mem`
 - `APP_DEFINES=-DGAME_USE_UART`
 
+工具鏈搜尋順序：
+- 優先使用 repo 內的 `toolchain/xpack-riscv-none-elf-gcc/bin`
+- 若該資料夾不存在，fallback 到 `C:/riscv/xpack-riscv-none-elf-gcc/bin`
+- 也可用 `TOOLCHAIN_BIN=...`、`CC_PREFIX=...`、`BINUTILS_PREFIX=...` 覆寫
+
 常用指令：
 
 ```powershell

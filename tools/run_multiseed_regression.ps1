@@ -48,6 +48,8 @@ function Compile-Sim {
     "ID.v",
     "IDEX_register.v",
     "EX.v",
+    "booth_multiplier.v",
+    "restoring_divider.v",
     "EXMEM_register.v",
     "MEM.v",
     "MEMWB_register.v",
@@ -59,8 +61,9 @@ function Compile-Sim {
     "I_D_arbitration.v",
     "branch_predictor.v",
     "uart_rx.v",
+    "uart_tx.v",
     "uart_bootloader.v",
-    "MIG_DDR3_interface.v"
+    "MIG_DDR2_interface.v"
   )
   & $IverilogExe "-g2005-sv" "-o" $OutSimExe @src
   if ($LASTEXITCODE -ne 0) {

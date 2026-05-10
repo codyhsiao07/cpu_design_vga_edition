@@ -124,12 +124,19 @@ def main() -> None:
     ap.add_argument("--build-dir", default="build_os/vga_slot_suite")
     ap.add_argument("--out-mem", default="TEST_FILES/mem_vga_games_menu.mem")
     ap.add_argument("--out-bin", default="build_os/vga_slot_suite/vga_games_menu_slots.bin")
-    ap.add_argument("--objcopy", default="C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv-none-elf-objcopy")
-    ap.add_argument("--gcc", default="C:/riscv/xpack-riscv-none-elf-gcc/bin/riscv64-unknown-elf-gcc")
+    ap.add_argument("--objcopy", default="")
+    ap.add_argument("--gcc", default="")
     ap.add_argument("--python", default="python")
     args = ap.parse_args()
 
     repo = Path(__file__).resolve().parent.parent
+    local_toolchain = repo / "toolchain" / "xpack-riscv-none-elf-gcc" / "bin"
+    default_toolchain = local_toolchain if local_toolchain.exists() else Path("C:/riscv/xpack-riscv-none-elf-gcc/bin")
+    if not args.gcc:
+        args.gcc = str(default_toolchain / "riscv64-unknown-elf-gcc")
+    if not args.objcopy:
+        args.objcopy = str(default_toolchain / "riscv-none-elf-objcopy")
+
     build_dir = repo / args.build_dir
     out_bin = repo / args.out_bin
     out_mem = repo / args.out_mem

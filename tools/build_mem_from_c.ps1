@@ -4,10 +4,20 @@ param(
   [string]$BuildDir = "build_rv32",
   [string]$Linker = "tools/link_ddr.ld",
   [string]$Crt0 = "tools/crt0.S",
-  [string]$ToolchainBin = "C:\\riscv\\xpack-riscv-none-elf-gcc\\bin"
+  [string]$ToolchainBin = ""
 )
 
 $ErrorActionPreference = "Stop"
+
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+$LocalToolchainBin = Join-Path $RepoRoot "toolchain\xpack-riscv-none-elf-gcc\bin"
+if ([string]::IsNullOrWhiteSpace($ToolchainBin)) {
+  if (Test-Path $LocalToolchainBin) {
+    $ToolchainBin = $LocalToolchainBin
+  } else {
+    $ToolchainBin = "C:\riscv\xpack-riscv-none-elf-gcc\bin"
+  }
+}
 
 function Find-Tool([string[]]$candidates) {
   foreach ($t in $candidates) {
