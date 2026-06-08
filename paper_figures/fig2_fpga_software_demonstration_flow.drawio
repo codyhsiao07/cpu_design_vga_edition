@@ -1,0 +1,140 @@
+<mxfile host="app.diagrams.net" modified="2026-05-18T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="fig2-fpga-software-demonstration-flow-vertical" name="Fig. 2 FPGA Software Demonstration Flow">
+    <mxGraphModel dx="1100" dy="1500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="FPGA Software Demonstration and Validation Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="25" width="740" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="left_lane" value="Software Preparation" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="30" y="80" width="250" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="right_lane" value="FPGA Execution and Validation" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#c05621;fillColor=#fff3df;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="315" y="80" width="535" height="1360" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="start" value="Start" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dff7ea;strokeColor=#2f855a;strokeWidth=2;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="115" y="130" width="80" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="source_code" value="Game Source Code&#xa;C / Assembly" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e8f1ff;strokeColor=#2b6cb0;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="55" y="230" width="200" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="toolchain" value="RISC-V Toolchain&#xa;Compile / Assemble / Link" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e8f1ff;strokeColor=#2b6cb0;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="55" y="365" width="200" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="program_image" value="Program Image&#xa;.elf / .mem" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#eef2ff;strokeColor=#5a67d8;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="55" y="505" width="200" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="runtime_note" value="Program image is loaded into DDR2 through USB-UART at runtime." style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff8d6;strokeColor=#b7791f;strokeWidth=1.5;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="55" y="625" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="configure_fpga" value="Configure FPGA&#xa;RISC-V SoC + VGA System" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff3df;strokeColor=#c05621;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="445" y="130" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="uart_bootloader" value="UART Bootloader&#xa;Load Image to DDR2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff3df;strokeColor=#c05621;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="445" y="235" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="cpu_execute" value="Start CPU Execution&#xa;Fetch from DDR2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff3df;strokeColor=#c05621;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="445" y="340" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="game_loop" value="Game Loop" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff8d6;strokeColor=#b7791f;strokeWidth=2;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="505" y="450" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="read_input" value="Read User Input&#xa;UART Keyboard / Buttons" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff3df;strokeColor=#c05621;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="445" y="585" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="update_state" value="Update Game State&#xa;Position / Score / Collision" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff3df;strokeColor=#c05621;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="445" y="690" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="call_api" value="Call Software APIs&#xa;VGA API + I/O API" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#f4e8ff;strokeColor=#805ad5;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="445" y="795" width="260" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="write_fb" value="Write Framebuffer through MMIO&#xa;160x120, 4-bit Color" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e3fbf8;strokeColor=#319795;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="445" y="900" width="260" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="vga_output" value="VGA Subsystem Output&#xa;640x480 VGA Display" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e3fbf8;strokeColor=#319795;strokeWidth=1.5;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="445" y="1010" width="260" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="validation" value="Validation Result" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff8d6;strokeColor=#b7791f;strokeWidth=2;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="505" y="1125" width="140" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="verified" value="SoC Integration Verified&#xa;CPU + Memory + MMIO + VGA" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffe4e8;strokeColor=#c53030;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="375" y="1280" width="250" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="end" value="End" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#dff7ea;strokeColor=#2f855a;strokeWidth=2;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="650" y="1290" width="80" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="debug" value="Debug Software / Hardware&#xa;Interface" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffe4e8;strokeColor=#c53030;strokeWidth=1.5;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="680" y="1135" width="145" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_start_source" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="start" target="source_code">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_source_toolchain" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="source_code" target="toolchain">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_toolchain_image" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="toolchain" target="program_image">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_image_bootloader" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=2;strokeColor=#5a67d8" edge="1" parent="1" source="program_image" target="uart_bootloader">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="538"/>
+              <mxPoint x="300" y="268"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_config_boot" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c05621" edge="1" parent="1" source="configure_fpga" target="uart_bootloader">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_boot_cpu" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c05621" edge="1" parent="1" source="uart_bootloader" target="cpu_execute">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_cpu_loop" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c05621" edge="1" parent="1" source="cpu_execute" target="game_loop">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_loop_input" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c05621" edge="1" parent="1" source="game_loop" target="read_input">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_input_update" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c05621" edge="1" parent="1" source="read_input" target="update_state">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_update_api" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#805ad5" edge="1" parent="1" source="update_state" target="call_api">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_api_fb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#319795" edge="1" parent="1" source="call_api" target="write_fb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_fb_vga" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#319795" edge="1" parent="1" source="write_fb" target="vga_output">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_vga_validation" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#319795" edge="1" parent="1" source="vga_output" target="validation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_validation_pass" value="Pass" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#2f855a;fontSize=12;fontStyle=1" edge="1" parent="1" source="validation" target="verified">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_verified_end" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#2f855a" edge="1" parent="1" source="verified" target="end">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_validation_fail" value="Fail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#c53030;fontSize=12;fontStyle=1" edge="1" parent="1" source="validation" target="debug">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_debug_loop" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=2;strokeColor=#c53030" edge="1" parent="1" source="debug" target="game_loop">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="835" y="1170"/>
+              <mxPoint x="835" y="495"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

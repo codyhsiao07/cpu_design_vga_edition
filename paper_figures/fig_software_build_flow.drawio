@@ -1,0 +1,134 @@
+<mxfile host="app.diagrams.net" modified="2026-05-20T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="software-build-flow" name="Software Build Flow">
+    <mxGraphModel dx="1650" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Software Build Flow / 軟體建置流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=26;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="335" y="20" width="980" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="input_lane" value="Source Inputs" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="40" y="95" width="330" height="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="build_lane" value="Makefile + RISC-V Toolchain" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="410" y="95" width="520" height="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="artifact_lane" value="Build Artifacts" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#82b366;fillColor=#d5e8d4;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="970" y="95" width="315" height="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="use_lane" value="Runtime Consumers" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="1325" y="95" width="280" height="640" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="Blue = build commands and toolchain&#xa;Green = generated artifacts&#xa;Yellow = simulation / FPGA loading path&#xa;Dashed = optional debug output" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="40" y="770" width="1565" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_src_make" value="SRC / EXTRA_SRCS" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="source" target="make_config">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_crt_compile" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="crt0" target="compile">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390" y="305"/>
+              <mxPoint x="390" y="265"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ld_link" value="LDSCRIPT" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="linker_script" target="link">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="390" y="460"/>
+              <mxPoint x="390" y="420"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_config_compile" value="CFLAGS" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="make_config" target="compile">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_compile_obj" value=".o files" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="compile" target="objects">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_obj_link" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="objects" target="link">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_link_elf" value=".elf + .map" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="link" target="elf">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_elf_objcopy" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="elf" target="objcopy">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_objcopy_bin" value=".bin" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="objcopy" target="bin">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bin_memtool" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="bin" target="bin_to_mem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_memtool_mem" value=".mem" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="bin_to_mem" target="mem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_elf_disasm" value="optional" style="endArrow=block;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#666666;fontSize=12" edge="1" parent="1" source="elf" target="disasm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mem_sim" value="$readmemh / +MEMFILE" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="mem" target="sim">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mem_uart" value="loaded by uart_send_mem.py" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="mem" target="uart_loader">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="source" value="Application Source&#xa;SRC = game/game.c or OS/main.c&#xa;EXTRA_SRCS for helpers" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="145" width="250" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="crt0" value="Startup Assembly&#xa;tools/crt0.S&#xa;_start, stack, clear .bss, call main" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="285" width="250" height="92" as="geometry"/>
+        </mxCell>
+        <mxCell id="linker_script" value="Linker Script&#xa;tools/link_ddr.ld&#xa;origin = 0x8000_0000&#xa;DDR length = 512 KiB" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="80" y="430" width="250" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="build_vars" value="Common Make Variables&#xa;OUT_NAME, MEM_OUT&#xa;APP_DEFINES, ARCH=rv32im&#xa;TOOLCHAIN_BIN" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="80" y="585" width="250" height="96" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="make_config" value="Makefile target&#xa;make mem&#xa;or make SRC=... OUT_NAME=... MEM_OUT=..." style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="455" y="145" width="210" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="compile" value="Compile&#xa;riscv64-unknown-elf-gcc&#xa;-march=rv32im -mabi=ilp32&#xa;-ffreestanding -nostdlib" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="695" y="225" width="200" height="106" as="geometry"/>
+        </mxCell>
+        <mxCell id="objects" value="Object Files&#xa;build_os/crt0.o&#xa;build_os/&lt;src&gt;.o&#xa;build_os/&lt;extra&gt;.o" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="455" y="355" width="210" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="link" value="Link&#xa;gcc + tools/link_ddr.ld&#xa;ENTRY(_start)&#xa;sections placed in DDR" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="695" y="395" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="objcopy" value="Binary Extract&#xa;riscv-none-elf-objcopy&#xa;-O binary" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="695" y="555" width="200" height="82" as="geometry"/>
+        </mxCell>
+        <mxCell id="bin_to_mem" value="MEM Conversion&#xa;tools/bin_to_mem.py&#xa;little-endian bytes to 32-bit hex words" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="455" y="565" width="210" height="96" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="elf" value="ELF + Map&#xa;build_os/&lt;name&gt;.elf&#xa;build_os/&lt;name&gt;.map&#xa;symbol and section layout" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1015" y="160" width="225" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="bin" value="Raw Binary&#xa;build_os/&lt;name&gt;.bin&#xa;flat program image" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1015" y="335" width="225" height="82" as="geometry"/>
+        </mxCell>
+        <mxCell id="mem" value="Memory Image&#xa;TEST_FILES/mem_&lt;name&gt;.mem&#xa;one 32-bit hex word per line&#xa;Verilog $readmemh format" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1015" y="520" width="225" height="112" as="geometry"/>
+        </mxCell>
+        <mxCell id="disasm" value="Optional Disassembly&#xa;build_os/&lt;name&gt;.dis&#xa;from objdump -D" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1015" y="655" width="225" height="66" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="sim" value="RTL Simulation&#xa;icache_pipeline_tb&#xa;+MEMFILE=&lt;mem&gt;&#xa;$readmemh loads image" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1365" y="195" width="200" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="uart_loader" value="FPGA Boot Load&#xa;uart_send_mem.py sends .mem&#xa;UART bootloader writes DDR2&#xa;CPU starts at 0x8000_0000" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1365" y="445" width="200" height="118" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

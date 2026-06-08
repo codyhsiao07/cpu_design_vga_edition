@@ -1,0 +1,107 @@
+<mxfile host="app.diagrams.net" modified="2026-05-20T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="host-program-loader" name="Host-side Program Loader">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Host-side Program Loader / 主機端程式載入工具" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=26;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="1000" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="host_lane" value="Host PC Inputs" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="45" y="95" width="315" height="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="script_lane" value="uart_send_mem.py" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="400" y="95" width="760" height="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="board_lane" value="FPGA Board" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="1200" y="95" width="340" height="630" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="Blue = host-side Python processing&#xa;Purple = UART packet/control bytes&#xa;Yellow = board-side bootloader path&#xa;Dashed = optional RX/interactive mode" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="45" y="760" width="1495" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_mem_args" value="--mem" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="mem_file" target="args">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_args_load" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="args" target="load_mem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_args_serial" value="--port / --baud / --delay" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="args" target="serial_open">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="325"/>
+              <mxPoint x="380" y="490"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_load_packet" value="payload bytes" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="load_mem" target="packet">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_packet_send" value="preamble + sync + length + payload" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="packet" target="serial_write">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_serial_send" value="COM port stream" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="serial_open" target="serial_write">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_write_usb" value="USB-UART" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="serial_write" target="usb_uart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_usb_boot" value="RX pin bytes" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="usb_uart" target="bootloader">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_boot_ddr" value="writes DDR2" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="bootloader" target="ddr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_write_optional" value="--listen / --interactive" style="endArrow=block;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#666666;fontSize=12" edge="1" parent="1" source="serial_write" target="interactive">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_interactive_usb" value="RX print / keyboard TX" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#666666;fontSize=12" edge="1" parent="1" source="interactive" target="usb_uart">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1025" y="650"/>
+              <mxPoint x="1180" y="650"/>
+              <mxPoint x="1180" y="255"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="mem_file" value=".mem program image&#xa;one 32-bit hex word per line&#xa;from Software Build Flow" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="85" y="155" width="235" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="args" value="Command-line options&#xa;--port COMx&#xa;--baud 115200&#xa;--mem TEST_FILES/*.mem&#xa;--delay / --preamble" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="85" y="310" width="235" height="122" as="geometry"/>
+        </mxCell>
+        <mxCell id="optional_args" value="Optional modes&#xa;--zero sends zero-length boot packet&#xa;--listen prints board RX&#xa;--interactive forwards keyboard input" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="85" y="520" width="235" height="112" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="load_mem" value="load_mem(path)&#xa;ignore blank/comment lines&#xa;parse 32-bit hex word&#xa;word.to_bytes(4, little)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="150" width="235" height="112" as="geometry"/>
+        </mxCell>
+        <mxCell id="packet" value="Packet builder&#xa;preamble: 0x55 repeated N times&#xa;sync: 0xC0DE5A5A&#xa;length: 32-bit little-endian&#xa;payload bytes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="770" y="140" width="245" height="132" as="geometry"/>
+        </mxCell>
+        <mxCell id="serial_open" value="Open serial port&#xa;pyserial.Serial(port, baud)&#xa;DTR/RTS inactive&#xa;reset input/output buffers&#xa;optional delay before send" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="450" y="430" width="245" height="124" as="geometry"/>
+        </mxCell>
+        <mxCell id="serial_write" value="Serial transmit&#xa;write preamble&#xa;write sync word&#xa;write length header&#xa;write payload and flush" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="785" y="420" width="230" height="124" as="geometry"/>
+        </mxCell>
+        <mxCell id="interactive" value="Post-upload mode&#xa;listen: print board UART RX&#xa;interactive: keyboard to UART TX&#xa;useful for game/menu demos" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="785" y="600" width="240" height="105" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="usb_uart" value="USB-UART bridge&#xa;board COM port&#xa;default 115200 baud" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1245" y="170" width="240" height="88" as="geometry"/>
+        </mxCell>
+        <mxCell id="bootloader" value="FPGA uart_bootloader&#xa;detect sync&#xa;read length&#xa;receive payload&#xa;pack to 128-bit MIG writes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1245" y="340" width="240" height="124" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddr" value="DDR2 program image&#xa;BOOT_ADDR = 0x8000_0000&#xa;CPU starts after boot_done" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1285" y="570" width="160" height="95" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

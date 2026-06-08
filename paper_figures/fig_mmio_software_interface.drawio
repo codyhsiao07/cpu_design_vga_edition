@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-20T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="mmio-software-interface-simple" name="MMIO Software Interface">
+    <mxGraphModel dx="1450" dy="820" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="MMIO Software Interface / MMIO 軟體介面" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=26;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="225" y="25" width="1000" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="software_lane" value="Bare-metal C Software" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="55" y="100" width="340" height="545" as="geometry" />
+        </mxCell>
+        <mxCell id="cpu_lane" value="CPU Data Path" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="435" y="100" width="375" height="545" as="geometry" />
+        </mxCell>
+        <mxCell id="target_lane" value="Hardware Target" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="850" y="100" width="545" height="545" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="MMIO access uses volatile load/store and bypasses D-Cache. Ordinary DDR data still goes through D-Cache / L2 / DDR2." style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#666666;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="55" y="685" width="1340" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="e_app_helper" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#666666" edge="1" parent="1" source="app_code" target="helper_api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_helper_mem" value="volatile load/store" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="helper_api" target="mem_stage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="365" y="378" />
+              <mxPoint x="365" y="235" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mem_decoder" value="dmem address" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="mem_stage" target="decoder">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_decoder_uart" value="UART range" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="decoder" target="uart_target">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="435" />
+              <mxPoint x="815" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_decoder_vga" value="VGA range" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00;fontSize=12" edge="1" parent="1" source="decoder" target="vga_target">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="830" y="435" />
+              <mxPoint x="830" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_decoder_dcache" value="DDR range" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="decoder" target="dcache_path">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_uart_io" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00" edge="1" parent="1" source="uart_target" target="io_output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_vga_io" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d79b00" edge="1" parent="1" source="vga_target" target="io_output">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rsp" value="ready / rdata / response" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#6c8ebf;fontSize=12" edge="1" parent="1" source="uart_target" target="mem_stage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="190" />
+              <mxPoint x="900" y="130" />
+              <mxPoint x="620" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="app_code" value="Application code&#xA;game / demo / test" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="170" width="245" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="helper_api" value="Helper API or direct macros&#xA;games_shared_ui / vga_fb&#xA;volatile pointer access" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="330" width="245" height="95" as="geometry" />
+        </mxCell>
+        <mxCell id="mem_stage" value="CPU MEM stage&#xA;load/store request&#xA;addr / data / strobe" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="495" y="190" width="245" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="decoder" value="Address Decoder&#xA;MMIO hit?&#xA;select peripheral or D$" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="495" y="390" width="245" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="uart_target" value="UART / launcher MMIO&#xA;TX/RX data and status&#xA;launcher button / reset" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="915" y="150" width="215" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="vga_target" value="VGA framebuffer MMIO&#xA;framebuffer writes&#xA;buffer control register" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1135" y="150" width="215" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="dcache_path" value="D-Cache path&#xA;ordinary DDR-backed data" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1030" y="405" width="230" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="io_output" value="Board I/O&#xA;USB-UART / VGA output" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d6b656;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="1025" y="555" width="240" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-05-20T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="uart-bootloader-simple-flow" name="UART Bootloader Flow">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="UART Bootloader Flow / UART 開機載入流程" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=26;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="310" y="20" width="980" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="host_lane" value="Host PC" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="45" y="95" width="300" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="boot_lane" value="uart_bootloader.v" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#9673a6;fillColor=#e1d5e7;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="385" y="95" width="760" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="ddr_lane" value="DDR2 Backend" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#d6b656;fillColor=#fff2cc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="1185" y="95" width="350" height="660" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="Purple = UART boot control path&#xA;Green = payload/write path&#xA;Yellow = DDR2/MIG backend&#xA;Dashed = reset/control release" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="45" y="785" width="1490" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="e_file_script" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#666666" edge="1" parent="1" source="mem_file" target="send_script">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_script_protocol" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="send_script" target="protocol">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_protocol_sync" value="UART RX bytes" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="protocol" target="sync_detect">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="365" y="483" />
+              <mxPoint x="365" y="195" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_wait_sync" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="wait_calib" target="sync_detect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sync_len" value="sync match" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="sync_detect" target="read_len">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_len_fifo" value="selected RX stream" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="read_len" target="rx_fifo">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_fifo_data" value="payload bytes" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="rx_fifo" target="data_buffer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_data_send" value="16B full or final partial block" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="data_buffer" target="send_write">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_send_mux" value="app write" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="send_write" target="mux">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mux_mig" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="mux" target="mig">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mig_ddr" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d6b656" edge="1" parent="1" source="mig" target="ddr">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_send_data_loop" value="more data" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="send_write" target="data_buffer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="536" />
+              <mxPoint x="1040" y="355" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_send_verify" value="all bytes written" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d6b656;fontSize=12" edge="1" parent="1" source="send_write" target="verify">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_verify_mux" value="app read" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#d6b656;fontSize=12" edge="1" parent="1" source="verify" target="mux">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="455" />
+              <mxPoint x="1190" y="455" />
+              <mxPoint x="1190" y="306" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_verify_done" value="verify OK" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="verify" target="done">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_done_cpu" value="release CPU after BOOT_RELEASE_CYCLES" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#9673a6;fontSize=12" edge="1" parent="1" source="done" target="wait_calib">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="845" y="735" />
+              <mxPoint x="395" y="735" />
+              <mxPoint x="395" y="195" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mem_file" value=".mem file&#xA;32-bit hex words" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="95" y="160" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="send_script" value="uart_send_mem.py&#xA;little-endian byte stream" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="95" y="285" width="200" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="protocol" value="UART packet&#xA;SYNC 0xC0DE5A5A&#xA;length N&#xA;N payload bytes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="95" y="430" width="200" height="105" as="geometry" />
+        </mxCell>
+        <mxCell id="com_note" value="Default baud: 115200&#xA;USB-UART board link" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="95" y="600" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="wait_calib" value="S_WAIT&#xA;wait for MIG calibration&#xA;and DDR memtest done" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="430" y="150" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="sync_detect" value="S_SYNC&#xA;detect sync word&#xA;select working RX stream" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="690" y="150" width="190" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="read_len" value="S_LEN&#xA;read 4-byte length&#xA;0 bytes -&gt; S_DONE&#xA;&gt; 8 MiB -&gt; resync" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="950" y="150" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="rx_fifo" value="RX FIFO&#xA;64-byte elastic buffer" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="505" y="315" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="data_buffer" value="S_DATA&#xA;collect payload bytes&#xA;pack 16 bytes into 128-bit buffer&#xA;generate byte mask" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="735" y="300" width="220" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="send_write" value="S_SEND&#xA;MIG WRITE command&#xA;app_addr = curr_addr - DDR_BASE&#xA;app_wdf_data = 128-bit payload" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="720" y="480" width="250" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="verify" value="S_VERIFY_REQ / WAIT&#xA;read back first 3 x 128-bit blocks&#xA;compare against expected bytes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="440" y="500" width="220" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="done" value="S_DONE&#xA;boot_done_o = 1&#xA;CPU reset can be released" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="735" y="635" width="220" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="mux" value="MIG app mux&#xA;memtest &gt; bootloader &gt; L2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1240" y="265" width="230" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="mig" value="Xilinx MIG DDR2&#xA;native app_* interface&#xA;128-bit write data" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1240" y="430" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ddr" value="External DDR2 SDRAM&#xA;BOOT_ADDR = 0x8000_0000&#xA;program image stored here" style="shape=cylinder3d;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1275" y="610" width="160" height="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

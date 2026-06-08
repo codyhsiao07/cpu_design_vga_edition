@@ -1,0 +1,131 @@
+<mxfile host="app.diagrams.net" modified="2026-05-20T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="baremetal-runtime-memory-layout" name="Bare-metal Runtime and Memory Layout">
+    <mxGraphModel dx="1650" dy="930" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1650" pageHeight="930" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Bare-metal Runtime and Memory Layout / 裸機執行環境與記憶體配置" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="235" y="20" width="1180" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="runtime_lane" value="Bare-metal Startup Flow" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="45" y="95" width="760" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="layout_lane" value="DDR Linker Memory Layout" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#82b366;fillColor=#d5e8d4;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="845" y="95" width="420" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="limits_lane" value="Runtime Model and Limits" style="swimlane;whiteSpace=wrap;html=1;startSize=34;rounded=1;arcSize=8;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;fontSize=14" vertex="1" parent="1">
+          <mxGeometry x="1305" y="95" width="300" height="650" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="Blue = CPU startup execution path&#xa;Green = DDR section layout from linker script&#xa;Yellow = bare-metal restrictions&#xa;Dashed = symbol reference from startup code to linker symbols" style="rounded=1;whiteSpace=wrap;html=1;arcSize=8;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="45" y="780" width="1560" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_reset_start" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="reset_pc" target="start">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_start_sp" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="start" target="setup_sp_gp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_sp_bss" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="setup_sp_gp" target="clear_bss">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_bss_main" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="clear_bss" target="call_main">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_main_return" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="call_main" target="return_x8">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_return_spin" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="return_x8" target="spin">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_entry_text" value="ENTRY(_start)" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="start" target="text_sec">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="790" y="190"/>
+              <mxPoint x="790" y="232"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sp_stack" value="__stack_top" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="setup_sp_gp" target="stack_sec">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="290"/>
+              <mxPoint x="815" y="628"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_gp_data" value="__global_pointer$" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="setup_sp_gp" target="data_sec">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="310"/>
+              <mxPoint x="815" y="370"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bss_symbol" value="__bss_start / __bss_end" style="endArrow=open;html=1;rounded=0;dashed=1;strokeWidth=2;strokeColor=#82b366;fontSize=12" edge="1" parent="1" source="clear_bss" target="bss_sec">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="410"/>
+              <mxPoint x="815" y="466"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="reset_pc" value="CPU reset release&#xa;RESET_PC = 0x8000_0000&#xa;program already loaded in DDR2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="85" y="150" width="210" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="start" value="_start&#xa;entry from tools/crt0.S&#xa;linker: ENTRY(_start)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="365" y="150" width="210" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="setup_sp_gp" value="Initialize runtime registers&#xa;sp = __stack_top&#xa;gp = __global_pointer$" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="365" y="270" width="230" height="92" as="geometry"/>
+        </mxCell>
+        <mxCell id="clear_bss" value="Clear .bss&#xa;for addr from __bss_start&#xa;to __bss_end: store 0" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="365" y="395" width="230" height="92" as="geometry"/>
+        </mxCell>
+        <mxCell id="call_main" value="Call C application&#xa;main()" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="410" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="return_x8" value="Return handling&#xa;x8 = a0&#xa;testbench-visible result" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="545" width="200" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="spin" value="Final state&#xa;infinite loop&#xa;no OS exit path" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="365" y="570" width="210" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="layout_header" value="tools/link_ddr.ld&#xa;DDR ORIGIN = 0x8000_0000&#xa;LENGTH = 512 KiB" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="145" width="310" height="82" as="geometry"/>
+        </mxCell>
+        <mxCell id="text_sec" value=".text + .rodata&#xa;startup code, program code, constants&#xa;starts at 0x8000_0000" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="250" width="310" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="data_sec" value=".data / .sdata&#xa;initialized global/static variables&#xa;defines __global_pointer$" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1f2df;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="336" width="310" height="78" as="geometry"/>
+        </mxCell>
+        <mxCell id="bss_sec" value=".bss / .sbss / COMMON&#xa;zero-initialized globals/statics&#xa;cleared by crt0.S" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eef8ea;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="414" width="310" height="86" as="geometry"/>
+        </mxCell>
+        <mxCell id="free_gap" value="unused DDR linker region&#xa;available until stack collision&#xa;check .map for large programs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;dashed=1;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="900" y="500" width="310" height="96" as="geometry"/>
+        </mxCell>
+        <mxCell id="stack_sec" value="stack&#xa;__stack_top = 0x8007_FFFC&#xa;grows downward" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="596" width="310" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="limit_flags" value="Compiler model&#xa;-march=rv32im -mabi=ilp32&#xa;-ffreestanding -nostdlib" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1340" y="150" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="limit_no_os" value="No hosted OS runtime&#xa;no process / thread&#xa;no syscall / filesystem" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1340" y="285" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="limit_libc" value="Standard library limits&#xa;no full printf / scanf&#xa;no malloc / free" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1340" y="420" width="230" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="limit_mmio" value="I/O model&#xa;use volatile MMIO&#xa;UART / VGA helper APIs" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1340" y="555" width="230" height="90" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

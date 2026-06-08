@@ -1,0 +1,267 @@
+<mxfile host="app.diagrams.net" modified="2026-05-25T00:00:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="riscv-pipeline-thesis-layout" name="RISC-V 五級管線架構-論文版">
+    <mxGraphModel dx="2800" dy="1550" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1550" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="bg" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbf7ee;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="2800" height="1550" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="title" value="RISC-V RV32IM 五級管線 CPU 架構圖" style="text;html=1;strokeColor=#8c52ff;fillColor=#fffdf7;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=42;fontColor=#000000;spacingLeft=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="35" width="760" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="本圖以架構層級呈現五級管線、Pipeline Register、Hazard / Forwarding 控制與 SoC 周邊整合；粗箭頭表示階段間傳遞的資料束。" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=19;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="850" y="48" width="1320" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-data" value="黑色粗箭頭：Pipeline 資料流" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=17;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="2220" y="35" width="230" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-control" value="紅色虛線：控制 / 回授" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d62828;fontSize=17;fontColor=#d62828;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="2220" y="82" width="230" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend-io" value="藍色虛線：Boot / I/O 路徑" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#4472c4;fontSize=17;fontColor=#4472c4;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="2470" y="82" width="230" height="38" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="if-band" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf4ff;strokeColor=#b8d8f5;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="175" width="370" height="790" as="geometry"/>
+        </mxCell>
+        <mxCell id="id-band" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff1f1;strokeColor=#f4b8b8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="175" width="400" height="790" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex-band" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf7ff;strokeColor=#acd6ed;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="175" width="520" height="790" as="geometry"/>
+        </mxCell>
+        <mxCell id="mem-band" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff4e8;strokeColor=#f4c48a;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1770" y="175" width="470" height="790" as="geometry"/>
+        </mxCell>
+        <mxCell id="wb-band" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff1f1;strokeColor=#f4b8b8;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="2380" y="175" width="330" height="790" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="stage-if" value="Instruction Fetch (IF)" style="shape=singleArrow;direction=east;whiteSpace=wrap;html=1;fillColor=#2d96ce;strokeColor=none;fontColor=#ffffff;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="125" width="320" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="stage-id" value="Instruction Decode (ID)" style="shape=singleArrow;direction=east;whiteSpace=wrap;html=1;fillColor=#ff2b2b;strokeColor=none;fontColor=#ffffff;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="590" y="125" width="340" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="stage-ex" value="Execute (EX)" style="shape=singleArrow;direction=east;whiteSpace=wrap;html=1;fillColor=#2d96ce;strokeColor=none;fontColor=#ffffff;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="125" width="450" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="stage-mem" value="Memory Access (MEM)" style="shape=singleArrow;direction=east;whiteSpace=wrap;html=1;fillColor=#ff7f23;strokeColor=none;fontColor=#ffffff;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="125" width="400" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="stage-wb" value="Write Back (WB)" style="shape=singleArrow;direction=east;whiteSpace=wrap;html=1;fillColor=#ff2b2b;strokeColor=none;fontColor=#ffffff;fontSize=20;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2400" y="125" width="260" height="52" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="if_logic" value="IF Stage Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8cbde6;fontSize=20;fontColor=#111111;fontStyle=1;verticalAlign=top;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="280" width="300" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="ifid" value="IF/ID&lt;br&gt;Pipeline Register&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Instruction&lt;br&gt;PC&lt;br&gt;PC + 4&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=17;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="455" y="280" width="85" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="id_logic" value="ID Stage Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#efb3b3;fontSize=20;fontColor=#111111;fontStyle=1;verticalAlign=top;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="600" y="280" width="330" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="idex" value="ID/EX&lt;br&gt;Pipeline Register&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Read Data 1 / 2&lt;br&gt;Immediate&lt;br&gt;rs / rt / rd&lt;br&gt;Control Signals&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=17;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="995" y="280" width="85" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex_logic" value="EX Stage Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#8cc8de;fontSize=20;fontColor=#111111;fontStyle=1;verticalAlign=top;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="1135" y="280" width="450" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="exmem" value="EX/MEM&lt;br&gt;Pipeline Register&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;ALU / M Result&lt;br&gt;Store Data&lt;br&gt;Branch Control&lt;br&gt;Mem / WB Control&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=17;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1655" y="280" width="85" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="mem_logic" value="MEM Stage Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f1be7d;fontSize=20;fontColor=#111111;fontStyle=1;verticalAlign=top;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="1800" y="280" width="380" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="memwb" value="MEM/WB&lt;br&gt;Pipeline Register&lt;br&gt;&lt;br&gt;&lt;font style=&quot;font-size: 15px;&quot;&gt;Memory Read Data&lt;br&gt;ALU Result&lt;br&gt;PC + 4&lt;br&gt;rd + WB Control&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=17;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2265" y="280" width="85" height="530" as="geometry"/>
+        </mxCell>
+        <mxCell id="wb_logic" value="WB Stage Logic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#efb3b3;fontSize=20;fontColor=#111111;fontStyle=1;verticalAlign=top;spacingTop=14;" vertex="1" parent="1">
+          <mxGeometry x="2395" y="280" width="260" height="530" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pc" value="PC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0d0d0;strokeColor=none;fontSize=18;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="125" y="350" width="95" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="pcadder" value="PC + 4&lt;br&gt;Adder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0d0d0;strokeColor=none;fontSize=17;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="125" y="450" width="95" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="npcmux" value="Next PC&lt;br&gt;MUX" style="shape=trapezoid;direction=east;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fillColor=#139fb5;strokeColor=none;fontSize=18;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="125" y="640" width="115" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="imem" value="Instruction Cache&lt;br&gt;/ Instruction Memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d96ce;strokeColor=none;fontSize=17;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="365" width="115" height="115" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="control" value="Control Unit&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;opcode / funct decode&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#70d44b;strokeColor=none;fontSize=17;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="340" width="135" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="regfile" value="Register File&lt;br&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;rs1 / rs2 / rd&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff5b5b;strokeColor=none;fontSize=18;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="455" width="135" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="immgen" value="Immediate&lt;br&gt;Generator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c46ce8;strokeColor=none;fontSize=17;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="630" y="595" width="135" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="hazard" value="Hazard Detection&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;stall / flush&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffbf56;strokeColor=none;fontSize=16;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="785" y="595" width="120" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="forward" value="Forwarding Unit&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;EX/MEM、MEM/WB bypass&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffbf56;strokeColor=none;fontSize=16;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="340" width="170" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="aluctrl" value="ALU Control&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;ALUOp + funct&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff8b1f;strokeColor=none;fontSize=16;fontColor=#111111;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="455" width="170" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="opmux" value="Operand&lt;br&gt;MUX" style="shape=trapezoid;direction=east;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fillColor=#139fb5;strokeColor=none;fontSize=18;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="610" width="115" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="alu" value="ALU" style="shape=trapezoid;direction=east;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fillColor=#139fb5;strokeColor=none;fontSize=36;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1385" y="585" width="150" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="branch" value="Branch / Jump&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;Compare + Target&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#70d44b;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="730" width="170" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="muldiv" value="Mul / Div Unit&lt;br&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;RV32M&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d96ce;strokeColor=none;fontSize=17;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1385" y="730" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dcache" value="Data Cache&lt;br&gt;/ Data Memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ff7f23;strokeColor=none;fontSize=19;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="340" width="170" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="memctrl" value="Memory Controller&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;BRAM / memory arbitration&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#111111;fontSize=16;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="505" width="170" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="mmio" value="MMIO Decoder&lt;br&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;Memory-Mapped I/O&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#00bf63;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="645" width="170" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="uart" value="UART&lt;br&gt;Bootloader" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d8fcf;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="465" width="115" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="vga" value="VGA&lt;br&gt;Framebuffer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d8fcf;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="585" width="115" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="gpio" value="GPIO&lt;br&gt;Buttons" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6d8fcf;strokeColor=none;fontSize=16;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2030" y="705" width="115" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wbmux" value="Writeback&lt;br&gt;MUX" style="shape=trapezoid;direction=east;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fillColor=#139fb5;strokeColor=none;fontSize=22;fontColor=#ffffff;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="2440" y="455" width="165" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="writerd" value="Write rd" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0d0d0;strokeColor=none;fontSize=18;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="2460" y="675" width="120" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="bundle1" value="instr / PC / PC+4" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=14;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="405" y="530" width="105" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="bundle2" value="decoded operands + ctrl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=14;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="865" y="530" width="150" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="bundle3" value="ALU / M result + mem ctrl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=14;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="1510" y="530" width="170" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="bundle4" value="read data + WB ctrl" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=14;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="2145" y="530" width="140" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="bundle5" value="writeback data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=14;fontColor=#111111;" vertex="1" parent="1">
+          <mxGeometry x="2320" y="530" width="115" height="28" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note-if" value="IF：選擇 next PC、擷取指令，並將 instruction、PC、PC+4 傳入 IF/ID pipeline register。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=17;fontColor=#111111;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1130" width="370" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-id" value="ID：解碼指令、讀取 rs1 / rs2、產生立即值與控制訊號；Hazard Detection 負責 stall 與 flush 控制。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=17;fontColor=#111111;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="570" y="1130" width="400" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-ex" value="EX：依據 forwarding select 與 ALU control 進行運算、乘除法、分支比較與目標位址計算。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=17;fontColor=#111111;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="1130" width="520" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-mem" value="MEM：執行 load / store，並透過 Memory Controller 與 MMIO Decoder 連接 UART、VGA Framebuffer 與 GPIO。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=17;fontColor=#111111;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="1770" y="1130" width="470" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="note-wb" value="WB：從 ALU result、memory read data 或 PC+4 中選擇寫回資料，更新 rd 暫存器。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d9d2c3;fontSize=17;fontColor=#111111;align=left;verticalAlign=top;spacing=12;" vertex="1" parent="1">
+          <mxGeometry x="2380" y="1130" width="330" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-if-ifid" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="if_logic" target="ifid">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-ifid-id" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="ifid" target="id_logic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-id-idex" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="id_logic" target="idex">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-idex-ex" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="idex" target="ex_logic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-ex-exmem" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="ex_logic" target="exmem">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-exmem-mem" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="exmem" target="mem_logic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-mem-memwb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="mem_logic" target="memwb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e-memwb-wb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=5;strokeColor=#111111;" edge="1" parent="1" source="memwb" target="wb_logic">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-forward-exmem" value="EX/MEM forward" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d62828;dashed=1;fontSize=14;fontColor=#d62828;" edge="1" parent="1" source="exmem" target="forward">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1698" y="230"/>
+              <mxPoint x="1255" y="230"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-forward-memwb" value="MEM/WB forward" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d62828;dashed=1;fontSize=14;fontColor=#d62828;" edge="1" parent="1" source="memwb" target="forward">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2308" y="210"/>
+              <mxPoint x="1255" y="210"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-branch-npc" value="branch / jump target" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d62828;dashed=1;fontSize=14;fontColor=#d62828;" edge="1" parent="1" source="branch" target="npcmux">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1255" y="1050"/>
+              <mxPoint x="183" y="1050"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-hazard-pc" value="PCWrite / stall / flush" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d62828;dashed=1;fontSize=14;fontColor=#d62828;" edge="1" parent="1" source="hazard" target="pc">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="845" y="990"/>
+              <mxPoint x="173" y="990"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-wb-regfile" value="RegWrite + rd + data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#111111;fontSize=14;fontColor=#111111;" edge="1" parent="1" source="writerd" target="regfile">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2520" y="1015"/>
+              <mxPoint x="698" y="1015"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-uart-imem" value="boot load to instruction memory" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#4472c4;dashed=1;fontSize=14;fontColor=#4472c4;" edge="1" parent="1" source="uart" target="imem">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2088" y="870"/>
+              <mxPoint x="308" y="870"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

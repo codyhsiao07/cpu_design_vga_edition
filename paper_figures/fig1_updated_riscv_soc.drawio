@@ -1,0 +1,234 @@
+<mxfile host="app.diagrams.net" modified="2026-05-18T00:00:00.000Z" agent="Codex" version="26.0.0" type="device">
+  <diagram id="fig1-updated-riscv-soc-clean-v2" name="Fig. 1 Updated SoC Architecture">
+    <mxGraphModel dx="1600" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Educational FPGA-Based RISC-V SoC Platform" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="360" y="20" width="880" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="build_flow" value="Program Build and Boot Flow" style="swimlane;whiteSpace=wrap;html=1;startSize=32;rounded=1;arcSize=8;strokeColor=#666666;fillColor=#f5f5f5;fontStyle=1;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="25" y="75" width="265" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="soc_platform" value="FPGA SoC Platform" style="swimlane;whiteSpace=wrap;html=1;startSize=32;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#dae8fc;fontStyle=1;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="320" y="75" width="890" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="io_demo" value="FPGA I/O and Demonstration" style="swimlane;whiteSpace=wrap;html=1;startSize=32;rounded=1;arcSize=8;strokeColor=#d79b00;fillColor=#fff2cc;fontStyle=1;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1240" y="75" width="330" height="760" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="src_code" value="Game Source Code&#xa;C / Assembly" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="60" y="135" width="195" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="toolchain" value="RISC-V Toolchain&#xa;Compile / Assemble / Link" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="60" y="250" width="195" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="program_image" value="Program Image&#xa;.elf / .mem" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#666666;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="370" width="195" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="send_uart" value="Send Image over USB-UART&#xa;to FPGA Bootloader" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="495" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="boot_note" value="Application image is loaded into DDR2 at runtime.&#xa;CPU execution starts from 0x8000_0000." style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="60" y="655" width="195" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="pipeline_box" value="RV32IM 5-Stage Pipeline Core" style="swimlane;whiteSpace=wrap;html=1;startSize=28;rounded=1;arcSize=8;strokeColor=#6c8ebf;fillColor=#ffffff;fontStyle=1;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="355" y="115" width="600" height="230" as="geometry"/>
+        </mxCell>
+        <mxCell id="hazard_unit" value="Hazard Unit&#xa;load-use stall / flush" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="395" y="155" width="180" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="forward_unit" value="Forwarding Unit&#xa;EX/MEM and MEM/WB bypass" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="665" y="155" width="215" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="pc" value="PC&#xa;0x8000_0000" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="385" y="250" width="70" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="if_stage" value="IF" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="485" y="255" width="55" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="id_stage" value="ID&#xa;Reg / Ctrl" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="570" y="245" width="82" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex_stage" value="EX&#xa;ALU" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="680" y="245" width="64" height="54" as="geometry"/>
+        </mxCell>
+        <mxCell id="mem_stage" value="MEM" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="775" y="255" width="64" height="34" as="geometry"/>
+        </mxCell>
+        <mxCell id="wb_stage" value="WB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="865" y="255" width="45" height="34" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="uart_bootloader" value="UART Bootloader&#xa;writes program image to DDR2&#xa;then releases CPU" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="990" y="130" width="190" height="85" as="geometry"/>
+        </mxCell>
+        <mxCell id="mmio_decoder" value="MMIO Address Decoder&#xa;cache bypass for peripherals" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="970" y="275" width="200" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="uart_mmio" value="UART MMIO" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="940" y="375" width="115" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="gpio_mmio" value="GPIO&#xa;Buttons / Switches" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="1070" y="375" width="115" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="vga_fb" value="VGA Frame Buffer&#xa;160x120, 4-bit color" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="970" y="470" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="vga_timing" value="VGA Timing Controller&#xa;640x480 output" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=12" vertex="1" parent="1">
+          <mxGeometry x="970" y="560" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="icache" value="L1 I-cache&#xa;instruction misses" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="405" y="395" width="180" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="dcache" value="L1 D-cache&#xa;load/store misses" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="695" y="395" width="180" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="id_arb" value="I/D Arbitration&#xa;selects one L1 miss request" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="550" y="520" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2_cache" value="Unified L2 Cache&#xa;shared backing cache" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="550" y="660" width="180" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="mig_mux" value="MIG App Mux&#xa;bootloader or L2 access" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="790" y="660" width="170" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddr2_mig" value="DDR2 MIG&#xa;Native App Interface" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1000" y="660" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddr2_memory" value="External DDR2&#xa;program + data" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1000" y="750" width="160" height="65" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="host_uart" value="Host PC / USB-UART&#xa;program sender + terminal" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1290" y="140" width="230" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="buttons" value="FPGA Board I/O&#xa;Buttons / Switches" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1290" y="380" width="230" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="vga_monitor" value="VGA Monitor&#xa;Interactive Game Demo" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1290" y="560" width="230" height="65" as="geometry"/>
+        </mxCell>
+        <mxCell id="observation" value="Educational Observation&#xa;pipeline / cache / I/O behavior" style="rounded=1;whiteSpace=wrap;html=1;arcSize=10;fillColor=#ffffff;strokeColor=#d79b00;fontSize=13" vertex="1" parent="1">
+          <mxGeometry x="1290" y="710" width="230" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_src_toolchain" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="src_code" target="toolchain">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_toolchain_image" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="toolchain" target="program_image">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_image_send" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="program_image" target="send_uart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_pc_if" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="pc" target="if_stage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_if_id" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="if_stage" target="id_stage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_id_ex" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="id_stage" target="ex_stage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_ex_mem" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="ex_stage" target="mem_stage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mem_wb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#333333" edge="1" parent="1" source="mem_stage" target="wb_stage">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_if_icache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#82b366" edge="1" parent="1" source="if_stage" target="icache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="512" y="360"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mem_dcache" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#82b366" edge="1" parent="1" source="mem_stage" target="dcache">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="807" y="360"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_icache_arb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450" edge="1" parent="1" source="icache" target="id_arb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="495" y="490"/>
+              <mxPoint x="640" y="490"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_dcache_arb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450" edge="1" parent="1" source="dcache" target="id_arb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="785" y="490"/>
+              <mxPoint x="640" y="490"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_arb_l2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450" edge="1" parent="1" source="id_arb" target="l2_cache">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_l2_mux" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="l2_cache" target="mig_mux">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mux_mig" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="mig_mux" target="ddr2_mig">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mig_ddr2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6" edge="1" parent="1" source="ddr2_mig" target="ddr2_memory">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_boot_mux" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=2;strokeColor=#82b366" edge="1" parent="1" source="uart_bootloader" target="mig_mux">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190" y="172"/>
+              <mxPoint x="1190" y="640"/>
+              <mxPoint x="875" y="640"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e_mem_mmio" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=2;strokeColor=#6c8ebf" edge="1" parent="1" source="mem_stage" target="mmio_decoder">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="807" y="325"/>
+              <mxPoint x="945" y="325"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mmio_uart" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#6c8ebf" edge="1" parent="1" source="mmio_decoder" target="uart_mmio">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mmio_gpio" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#6c8ebf" edge="1" parent="1" source="mmio_decoder" target="gpio_mmio">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_mmio_vgafb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#6c8ebf" edge="1" parent="1" source="mmio_decoder" target="vga_fb">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_vgafb_timing" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#6c8ebf" edge="1" parent="1" source="vga_fb" target="vga_timing">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e_host_bootloader" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=2;strokeColor=#d79b00" edge="1" parent="1" source="host_uart" target="uart_bootloader">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_buttons_gpio" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.5;strokeColor=#d79b00" edge="1" parent="1" source="buttons" target="gpio_mmio">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_timing_monitor" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d79b00" edge="1" parent="1" source="vga_timing" target="vga_monitor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_monitor_observation" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;dashed=1;strokeWidth=1.5;strokeColor=#d79b00" edge="1" parent="1" source="vga_monitor" target="observation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
