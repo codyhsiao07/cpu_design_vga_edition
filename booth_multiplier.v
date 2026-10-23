@@ -14,64 +14,92 @@ module booth_multiplier(
   output reg [31:0] result_o
 );
 
-  reg [63:0] accum_q;
-  reg [63:0] multiplicand_q;
-  reg [31:0] multiplier_q;
-  reg        negate_q;
-  reg        high_half_q;
-  reg [5:0]  count_q;
+  // 將有號／無號輸入，統一表示成 33 位元有號數。
+  wire signed [32:0] a_ext;
+  wire signed [32:0] b_ext;
 
-  reg [63:0] accum_next;
-  reg [63:0] product_next;
-  reg [63:0] signed_product_next;
+  assign a_ext = {signed_a_i & a_i[31], a_i};
+  assign b_ext = {signed_b_i & b_i[31], b_i};
 
-  wire [31:0] abs_a = (signed_a_i && a_i[31]) ? (~a_i + 32'd1) : a_i;
-  wire [31:0] abs_b = (signed_b_i && b_i[31]) ? (~b_i + 32'd1) : b_i;
-  wire        negate_start = (signed_a_i && a_i[31]) ^ (signed_b_i && b_i[31]);
+  // 運算狀態。
+  reg signed [67:0] accum_q;
+  reg signed [67:0] multiplicand_q;
+  reg signed [33:0] multiplier_q;
+  reg [4:0] count_q;
+  reg high_half_q;
 
+  // 本輪部分積，以及加入部分積後的新總和。
+  reg signed [67:0] partial_product;
+  reg signed [67:0] accum_next;
+
+  // Radix-4 Booth 編碼。
+  always @(*) begin
+    partial_product = 68'sd0;
+
+    case (multiplier_q[2:0])
+      3'b000, 3'b111:
+        partial_product = 68'sd0;
+
+      3'b001, 3'b010:
+        partial_product = multiplicand_q;
+
+      3'b011:
+        partial_product = multiplicand_q <<< 1;
+
+      3'b100:
+        partial_product = -(multiplicand_q <<< 1);
+
+      3'b101, 3'b110:
+        partial_product = -multiplicand_q;
+
+      default:
+        partial_product = 68'sd0;
+    endcase
+
+    accum_next = accum_q + partial_product;
+  end
+
+  // 啟動、逐輪運算，以及結果輸出。
   always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
       busy_o         <= 1'b0;
       done_o         <= 1'b0;
       result_o       <= 32'b0;
-      accum_q        <= 64'b0;
-      multiplicand_q <= 64'b0;
-      multiplier_q   <= 32'b0;
-      negate_q       <= 1'b0;
+      accum_q        <= 68'sd0;
+      multiplicand_q <= 68'sd0;
+      multiplier_q   <= 34'sd0;
+      count_q        <= 5'd0;
       high_half_q    <= 1'b0;
-      count_q        <= 6'd0;
     end else begin
-      done_o <= 0;
+      // done_o 只在完成時維持一個 clock。
+      done_o <= 1'b0;
 
       if (start_i && !busy_o) begin
+        // 接受新運算並保存輸入。
         busy_o         <= 1'b1;
-        accum_q        <= 64'b0;
-        multiplicand_q <= {32'b0, abs_a};
-        multiplier_q   <= abs_b;
-        negate_q       <= negate_start;
+        accum_q        <= 68'sd0;
+        multiplicand_q <= {{35{a_ext[32]}}, a_ext};
+        multiplier_q   <= {b_ext, 1'b0};
+        count_q        <= 5'd0;
         high_half_q    <= high_half_i;
-        count_q        <= 6'd0;
-      end else if (busy_o) begin
-        accum_next = accum_q;
-        if (multiplier_q[0]) begin
-          accum_next = accum_q + multiplicand_q;
-        end
-        product_next = accum_next;
-        if (negate_q) begin
-          signed_product_next = (~product_next) + 64'd1;
-        end else begin
-          signed_product_next = product_next;
-        end
 
-        if (count_q == 6'd31) begin
-          busy_o   <= 1'b0;
-          done_o   <= 1'b1;
-          result_o <= high_half_q ? signed_product_next[63:32] : signed_product_next[31:0];
+      end else if (busy_o) begin
+        accum_q <= accum_next;
+
+        // 從 0 數到 16，共執行 17 輪。
+        if (count_q == 5'd16) begin
+          busy_o <= 1'b0;
+          done_o <= 1'b1;
+
+          // 使用包含最後一輪部分積的新總和。
+          result_o <= high_half_q
+                    ? accum_next[63:32]
+                    : accum_next[31:0];
         end else begin
-          accum_q        <= accum_next;
-          multiplicand_q <= multiplicand_q << 1;
-          multiplier_q   <= multiplier_q >> 1;
-          count_q        <= count_q + 6'd1;
+          // 每輪前進兩個位元。
+          multiplicand_q <= multiplicand_q <<< 2;
+          multiplier_q   <= multiplier_q >>> 2;
+          count_q        <= count_q + 5'd1;
         end
       end
     end
