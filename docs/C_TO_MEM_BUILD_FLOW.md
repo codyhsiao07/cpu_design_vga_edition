@@ -642,6 +642,7 @@ int main(void)
 iverilog -g2005-sv -o icache_pipeline_tb.out `
   icache_pipeline_tb.v `
   icache_pipeline_top.v `
+  performance_monitor.v `
   icache_top.v `
   icache.v `
   IF.v `

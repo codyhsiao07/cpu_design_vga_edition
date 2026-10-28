@@ -46,6 +46,8 @@ module hazard_unit #(
   input        redirect_valid_i,//EX 決定改 PC：branch taken/jump/jalr
   //也就是 PC 將被覆寫到新 target，原本 IF/ID/IDEX 中 younger 指令都是錯路徑
 
+  output perf_load_use_wait_o,
+
   // ===== Outputs to pipeline registers =====
   output       stall_if_o,//freeze PC/IF stage
   output       stall_id_o,//freeze IF/ID pipeline register
@@ -106,6 +108,7 @@ module hazard_unit #(
   wire structural_stall_back  = mem_stall_i;                  // EX/EXMEM only MEM
 
   wire ex_long_stall = ex_stall_req_i;
+  assign perf_load_use_wait_o = load_use_hazard && !mem_stall_i && !ex_long_stall;
 
   assign stall_if_o    = structural_stall_front | stall_for_data | ex_long_stall;
   assign stall_id_o    = structural_stall_front | stall_for_data | ex_long_stall;

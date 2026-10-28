@@ -1,5 +1,5 @@
 param(
-  [string[]]$Tests = @("24","25","26","27"),
+  [string[]]$Tests = @("24","25","26","27","30"),
   [int]$SeedStart = 1,
   [int]$SeedCount = 20,
   [string]$OutDir = "build_multiseed",
@@ -7,6 +7,7 @@ param(
   [string]$Iverilog = "iverilog",
   [string]$Vvp = "vvp",
   [int]$Compile = 1,
+  [ValidateSet(0,1)][int]$FetchOverlap = 0,
   [int]$RandMem = 1,
   [int]$RandBpPct = 15,
   [int]$RandIMax = 9,
@@ -41,6 +42,7 @@ function Compile-Sim {
   $src = @(
     "icache_pipeline_tb.v",
     "icache_pipeline_top.v",
+    "performance_monitor.v",
     "icache_top.v",
     "icache.v",
     "IF.v",
@@ -65,7 +67,7 @@ function Compile-Sim {
     "uart_bootloader.v",
     "MIG_DDR2_interface.v"
   )
-  & $IverilogExe "-g2005-sv" "-o" $OutSimExe @src
+  & $IverilogExe "-g2005-sv" "-P" "icache_pipeline_tb.FETCH_OVERLAP_EN=$FetchOverlap" "-o" $OutSimExe @src
   if ($LASTEXITCODE -ne 0) {
     throw "Compile failed."
   }

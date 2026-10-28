@@ -26,6 +26,10 @@ module dcache_blocking
 (
     input                   clk,
     input                   rst_n,
+    output                  perf_load_o,
+    output                  perf_load_miss_o,
+    output                  perf_store_o,
+    output                  perf_store_miss_o,
 
     // ---------------- CPU request ----------------
     input                   cpu_req_valid,//CPU 端「有一筆記憶體存取請求」要送進 DCache 時拉高  CPU→DCache
@@ -118,6 +122,12 @@ module dcache_blocking
     ;
 
     reg [3:0] state;
+    // Classify the original lookup, including no-write-allocate store misses.
+    wire perf_lookup = (state == S_LOOKUP1) && !req_uncached_r;
+    assign perf_load_o = perf_lookup && !req_we_r;
+    assign perf_load_miss_o = perf_load_o && !hit_w;
+    assign perf_store_o = perf_lookup && req_we_r;
+    assign perf_store_miss_o = perf_store_o && !hit_w;
 
     // ---------------- Request latch ----------------
     reg [ADDR_W-1:0]     req_addr_r;

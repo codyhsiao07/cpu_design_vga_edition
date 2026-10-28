@@ -93,15 +93,17 @@ python uart_send_mem.py --port COM3 --mem TEST_FILES/mem_game.mem --delay 0.2
 成功時終端機會印出類似：
 
 ```text
-Sent 2224 bytes from TEST_FILES/mem_game.mem to COM3 @ 115200
+Host transmission completed: sync+2224 bytes from TEST_FILES/mem_game.mem to COM3 @ 115200
+Note: the current FPGA boot protocol has no host-visible ACK/CRC; confirm boot_done/status LEDs on the board.
 ```
 
 這表示：
 
 - `.mem` 已被讀取
-- UART header + payload 已送出
+- UART header + payload 已由主機送出
 
-這不代表板上執行一定成功，但至少 PC 端送檔已完成。
+這不代表 FPGA 已完整、正確地寫入 DDR。現有協定沒有回傳 ACK 或整份映像的 CRC，
+所以仍要確認 `boot_done`/狀態 LED；若未完成，不要只依賴主機端的完成訊息。
 
 ## 常見問題
 
@@ -127,7 +129,7 @@ python -m pip install pyserial
 
 1. 板子是否真的在 bootloader 等待狀態
 2. 是否在送之前有按 reset
-3. baud 是否一致（目前預設 `115200`）
+3. baud 是否一致（目前預設 `115200`），以及 `UART_CLK_HZ` 是否等於 Vivado `report_clocks` 顯示的 MIG `ui_clk`
 4. bitstream 是否正確
 
 ### 4. 想送別的程式
@@ -142,8 +144,8 @@ python uart_send_mem.py --port COM3 --mem TEST_FILES/mem_os.mem
 
 ## 補充
 
-- `uart_send_mem.py` 只負責「送檔」
-- 它不會幫你開啟互動終端機
+- `uart_send_mem.py` 預設會等待 1 秒、送 4096-byte preamble，並以 256-byte chunk 節流 payload
+- 加上 `--interactive` 可在傳送後直接進入互動終端機
 
 如果你要和遊戲互動：
 
@@ -153,4 +155,3 @@ python uart_send_mem.py --port COM3 --mem TEST_FILES/mem_os.mem
 4. python uart_send_mem.py --port COM7 --baud 115200 --mem TEST_FILES/mem_game.mem --delay 3.0 --preamble 4096 --interactive
 5. python uart_send_mem.py --port COM7 --baud 115200 --mem TEST_FILES/mem_tetris.mem --delay 3.0 --preamble 4096 --interactive
 6. python uart_send_mem.py --port COM7 --baud 115200 --mem TEST_FILES/mem_games_menu.mem --delay 3.0 --preamble 4096 --interactive
-

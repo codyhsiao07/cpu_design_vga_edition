@@ -14,6 +14,8 @@ module i_cache
 (
     input                       clk,
     input                       rst_n,
+    output                      perf_lookup_o,
+    output                      perf_miss_o,
 
     input                       if_req_valid, //MEM request valid
     input  [ADDR_WIDTH-1:0]     if_req_addr, //request address pc
@@ -212,6 +214,10 @@ module i_cache
     assign if_req_ready = (state == ST_IDLE) && !(if_resp_valid && !if_resp_ready);
 
     wire accept_req;
+    // Count the original tag decision once; refill replay is not a new access.
+    assign perf_lookup_o = (state == ST_IDLE) && !flush_pending && !inv_pending &&
+                           !(if_resp_valid && !if_resp_ready) && s2_valid && !s2_uncached;
+    assign perf_miss_o = perf_lookup_o && !hit;
     assign accept_req = if_req_valid && if_req_ready && !if_req_kill;
 
     // ----------------------------
@@ -611,6 +617,10 @@ module i_cache
                     state <= ST_IDLE;
                 end
             endcase
+            // Redirect can coincide with the cycle that PRODUCES a response.
+            // Epoch comparisons above see the old tag until this clock edge;
+            // cancel that newly produced response as well as an already held one.
+            if (if_req_kill) if_resp_valid <= 1'b0;
         end
     end
 

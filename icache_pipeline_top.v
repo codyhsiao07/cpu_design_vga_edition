@@ -17,6 +17,7 @@ module icache_pipeline_top #(
   parameter integer DMEM_WORDS  = 1024,
   parameter integer USE_MIG     = 0,
   parameter integer USE_VGA     = 0,
+  parameter integer FETCH_OVERLAP_EN = 0,
   parameter integer UART_BOOT_EN = 0,
   parameter integer UART_BAUD    = 115_200,
   parameter integer UART_CLK_HZ  = 100_000_000,
@@ -758,6 +759,11 @@ module icache_pipeline_top #(
   assign vga_green_o = vga_green_w;
   assign vga_blue_o  = vga_blue_w;
 
+  // Profiler event wires are explicit module ports (no synthesis hierarchy taps).
+  wire perf_i_lookup, perf_i_miss;
+  wire perf_d_load, perf_d_load_miss, perf_d_store, perf_d_store_miss;
+  wire perf_load_use_wait;
+
   // ================= IF =================
   wire [31:0] if_pc;
   wire [31:0] ex_redirect_pc_raw;
@@ -821,6 +827,8 @@ module icache_pipeline_top #(
     .INDEX_BITS (I_CACHE_INDEX_BITS_CFG),
     .TAG_BITS   (I_CACHE_TAG_BITS_CFG)
   ) u_icache (
+    .perf_lookup_o (perf_i_lookup),
+    .perf_miss_o (perf_i_miss),
     .clk              (core_clk),
     .rst_n            (core_rst_n),
     .fetch_req_valid_i  (fetch_req_valid),
@@ -866,7 +874,10 @@ module icache_pipeline_top #(
   // Redirect cancels the request via fetch_req_kill. Do not fold redirect into
   // fetch_req_valid itself; that duplicate gating created the worst setup path
   // into the I$ request accept/CE logic.
-  assign fetch_req_valid = ~if_pending & ~stall_if_hdu;
+  // Optional A/B experiment: launch the next request on the current response
+  // handshake. Still at most one outstanding fetch; no speculative FIFO added.
+  wire fetch_overlap_launch = (FETCH_OVERLAP_EN != 0) && fetch_resp_valid && fetch_resp_ready;
+  assign fetch_req_valid = (~if_pending | fetch_overlap_launch) & ~stall_if_hdu;
   assign fetch_req_hs = fetch_req_valid & fetch_req_ready & ~fetch_req_kill;
 
   always @(posedge core_clk or negedge core_rst_n) begin
@@ -875,6 +886,9 @@ module icache_pipeline_top #(
     end else begin
       if (fe_redirect_valid) begin
         if_pending <= 1'b0;
+      end else if ((FETCH_OVERLAP_EN != 0) && fetch_req_hs) begin
+        // With overlap a simultaneous response+request leaves one NEW request.
+        if_pending <= 1'b1;
       end else if (fetch_resp_valid && fetch_resp_ready) begin
         // Response wins: same-cycle request+response means no outstanding left.
         if_pending <= 1'b0;
@@ -1193,11 +1207,12 @@ module icache_pipeline_top #(
   wire [31:0] dmem_rdata_i;
   wire        store_done_i;
   wire        dmem_rsp_err_i;
+  reg         mem_consumed_q;
 
   mem_stage u_mem (
     .clk              (core_clk),
     .rst_n            (core_rst_n),
-    .mem_valid_i      (mem_valid),
+    .mem_valid_i      (mem_valid & ~mem_consumed_q),
     .mem_alu_result_i (mem_alu_result),
     .mem_store_data_i (mem_store_data),
     .mem_mem_read_i   (mem_mem_read),
@@ -1261,7 +1276,11 @@ module icache_pipeline_top #(
       (dmem_addr_o >= VGA_MMIO_BASE) &&
       (dmem_addr_o <= VGA_MMIO_LAST);
   wire        vga_mmio_req_valid = dmem_req_o & vga_mmio_hit;
-  wire        local_mmio_hit = uart_mmio_hit | vga_mmio_hit;
+  wire perf_mmio_hit = (dmem_addr_o[31:12] == 20'h40010);
+  wire perf_ready, perf_rsp_valid, perf_rsp_err;
+  wire [31:0] perf_rdata;
+  wire [3:0] perf_status;
+  wire local_mmio_hit = uart_mmio_hit | vga_mmio_hit | perf_mmio_hit;
 
   wire [7:0] uart_mmio_wbyte =
       dmem_wstrb_o[0] ? dmem_wdata_o[7:0]   :
@@ -1462,6 +1481,10 @@ module icache_pipeline_top #(
     .CACHE_BYTES(D_CACHE_BYTES_CFG),
     .WAYS       (2)
   ) u_dcache (
+    .perf_load_o (perf_d_load),
+    .perf_load_miss_o (perf_d_load_miss),
+    .perf_store_o (perf_d_store),
+    .perf_store_miss_o (perf_d_store_miss),
     .clk              (core_clk),
     .rst_n            (core_rst_n),
     .cpu_req_valid   (dcache_cpu_req_valid),
@@ -1491,13 +1514,17 @@ module icache_pipeline_top #(
     .l2_rsp_err      (d_l2_rsp_err_int)
   );
 
-  assign dmem_ready_i  = uart_mmio_hit ? uart_mmio_ready :
+  assign dmem_ready_i  = perf_mmio_hit ? perf_ready :
+                         uart_mmio_hit ? uart_mmio_ready :
                          (vga_mmio_hit ? vga_mmio_ready : dcache_cpu_req_ready);
-  assign dmem_rvalid_i = uart_mmio_hit ? uart_mmio_rsp_valid :
+  assign dmem_rvalid_i = perf_mmio_hit ? perf_rsp_valid :
+                         uart_mmio_hit ? uart_mmio_rsp_valid :
                          (vga_mmio_hit ? vga_mmio_rsp_valid : dcache_cpu_rsp_valid);
-  assign dmem_rdata_i  = uart_mmio_hit ? uart_mmio_rsp_rdata :
+  assign dmem_rdata_i  = perf_mmio_hit ? perf_rdata :
+                         uart_mmio_hit ? uart_mmio_rsp_rdata :
                          (vga_mmio_hit ? vga_mmio_rsp_rdata : dcache_cpu_rsp_rdata);
-  assign dmem_rsp_err_i = uart_mmio_hit ? uart_mmio_rsp_err :
+  assign dmem_rsp_err_i = perf_mmio_hit ? perf_rsp_err :
+                         uart_mmio_hit ? uart_mmio_rsp_err :
                           (vga_mmio_hit ? vga_mmio_rsp_err : dcache_cpu_rsp_err);
   assign store_done_i  = dmem_rvalid_i;
   wire        mem_err_event = dmem_rvalid_i & dmem_rsp_err_i;
@@ -1507,7 +1534,43 @@ module icache_pipeline_top #(
   wire        wb_i_valid;
   wire        wb_stall;
 
-  assign wb_i_valid = mem_mem_read ? mem_load_valid : (mem_valid & ~mem_stall);
+  // A resident EX/MEM payload can be held by a younger long EX operation.
+  // Consume it exactly once, including the load-response cycle under MEM stall.
+  assign wb_i_valid = mem_valid && !mem_consumed_q && !mem_err_event &&
+                      (mem_mem_read ? mem_load_valid : !mem_stall);
+  always @(posedge core_clk or negedge core_rst_n) begin
+    if (!core_rst_n) mem_consumed_q <= 1'b0;
+    else if (!stall_exmem) mem_consumed_q <= 1'b0;
+    else if (wb_i_valid) mem_consumed_q <= 1'b1;
+  end
+
+  reg mem_ctrl_q, mem_branch_q, mem_branch_miss_q;
+  reg [31:0] mem_target_q;
+  reg [31:0] retire_pc, retire_target;
+  reg retire_ctrl, retire_branch, retire_branch_miss;
+  wire retire_valid = wb_valid;
+  // Sideband follows the same EX/MEM and MEM/WB enables as the instruction.
+  always @(posedge core_clk or negedge core_rst_n) begin
+    if (!core_rst_n) begin
+      mem_ctrl_q <= 0; mem_branch_q <= 0; mem_branch_miss_q <= 0; mem_target_q <= 0;
+      retire_pc <= 0; retire_target <= 0;
+      retire_ctrl <= 0; retire_branch <= 0; retire_branch_miss <= 0;
+    end else begin
+      if (!stall_exmem) begin
+        mem_ctrl_q <= ex_is_ctrl_valid;
+        mem_branch_q <= ex_branch;
+        mem_branch_miss_q <= ex_pred_dir_miss;
+        mem_target_q <= ex_actual_taken ? ex_redirect_pc_raw : ex_pc4;
+      end
+      if (wb_i_valid) begin
+        retire_pc <= mem_pc4 - 32'd4;
+        retire_target <= mem_target_q;
+        retire_ctrl <= mem_ctrl_q;
+        retire_branch <= mem_branch_q;
+        retire_branch_miss <= mem_branch_miss_q;
+      end
+    end
+  end
   assign wb_stall   = mem_stall & ~mem_load_valid;
 
   mem_wb u_mem_wb (
@@ -1526,6 +1589,34 @@ module icache_pipeline_top #(
     .o_rd         (wb_rd),
     .o_rd_wen     (wb_rd_wen),
     .o_wb_wdata   (wb_wdata)
+  );
+
+`ifdef FAST_SIM
+  localparam integer PERF_L2_BYTES = 16384;
+`elsif FAST_SYNTH
+  localparam integer PERF_L2_BYTES = 16384;
+`else
+  localparam integer PERF_L2_BYTES = 262144;
+`endif
+  performance_monitor #(
+    .CORE_HZ(UART_CLK_HZ), .IC_BYTES(I_CACHE_BYTES_CFG),
+    .FEATURE_FLAGS((FETCH_OVERLAP_EN != 0) ? 32'h1 : 32'h0),
+    .DC_BYTES(D_CACHE_BYTES_CFG), .L2_BYTES(PERF_L2_BYTES)
+  ) u_perf (
+    .clk(core_clk), .rst_n(core_rst_n),
+    .req_valid(dmem_req_o && perf_mmio_hit), .req_we(dmem_we_o),
+    .req_addr(dmem_addr_o[11:0]), .req_wdata(dmem_wdata_o), .req_wstrb(dmem_wstrb_o),
+    .ready(perf_ready), .rsp_valid(perf_rsp_valid), .rdata(perf_rdata), .err(perf_rsp_err),
+    .retire_valid(retire_valid), .retire_pc(retire_pc),
+    .retire_ctrl(retire_ctrl), .retire_target(retire_target),
+    .retire_branch(retire_branch), .retire_branch_miss(retire_branch_miss),
+    .events({(ex_stall_o && ex_alu_op[3:2] == 2'b11),
+             (ex_stall_o && ex_alu_op[3:2] == 2'b10),
+             perf_load_use_wait, mem_stall,
+             (!id_valid && (if_pending || req_blocked)),
+             perf_d_store_miss, perf_d_store, perf_d_load_miss, perf_d_load,
+             perf_i_miss, perf_i_lookup}),
+    .fault(ifetch_err_o || mem_err_event), .status(perf_status)
   );
 
   // ================= WB =================
@@ -1555,6 +1646,7 @@ module icache_pipeline_top #(
   wire [31:0] pending_load_mask = 32'b0;
 
   hazard_unit u_hdu (
+    .perf_load_use_wait_o(perf_load_use_wait),
     .id_valid_i         (id_valid),
     .id_rs1_i           (id_rs1),
     .id_rs2_i           (id_rs2),
@@ -1581,7 +1673,7 @@ module icache_pipeline_top #(
   );
 
   // Front-end hold while an outstanding fetch exists or handshake is back-pressured.
-  assign stall_if    = stall_if_hdu | if_pending | req_blocked | resp_blocked;
+  assign stall_if    = stall_if_hdu | (if_pending & ~fetch_overlap_launch) | req_blocked | resp_blocked;
   assign stall_id    = stall_id_hdu;
   assign stall_ex    = stall_ex_hdu;
   assign stall_exmem = stall_exmem_hdu;

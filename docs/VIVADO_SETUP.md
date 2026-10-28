@@ -55,6 +55,7 @@ Board: Nexys A7-100T, if board files are installed
 ```text
 clock_bridge.v
 icache_pipeline_top.v
+performance_monitor.v
 IF.v
 IFID_register.v
 ID.v

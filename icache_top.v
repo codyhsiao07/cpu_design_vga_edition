@@ -17,6 +17,8 @@ module icache_top #(
 ) (
   input                   clk,
   input                   rst_n,
+  output                  perf_lookup_o,
+  output                  perf_miss_o,
 
   // Fetch request/response
   input                   fetch_req_valid_i,
@@ -62,6 +64,8 @@ module icache_top #(
   ) u_icache (
     .clk           (clk),
     .rst_n         (rst_n),
+    .perf_lookup_o (perf_lookup_o),
+    .perf_miss_o   (perf_miss_o),
 
     .if_req_valid  (fetch_req_valid_i),
     .if_req_addr   (fetch_req_addr_i),

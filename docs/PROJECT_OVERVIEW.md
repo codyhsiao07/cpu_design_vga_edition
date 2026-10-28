@@ -107,6 +107,7 @@ CPU 目前驗證重點包含：
 | `0x4000_000C` | UART RX status |
 | `0x4000_0010` | Launcher button/status MMIO |
 | `0x4000_0014` | Launcher reset request MMIO |
+| `0x4001_0000..0x4001_0FFF` | Main-call performance monitor MMIO |
 | `0x5000_0000` | VGA framebuffer base |
 | `0x5000_7FFC` | VGA framebuffer control / display buffer select |
 

@@ -42,17 +42,34 @@ APP_DEFINES ?= -DGAME_USE_UART
 ARCH    ?= rv32im
 CFLAGS  ?= -march=$(ARCH) -mabi=ilp32 -ffreestanding -nostdlib -O2 -Wall -Wextra $(APP_DEFINES)
 LDFLAGS ?= -march=$(ARCH) -mabi=ilp32 -nostdlib -Wl,-T,$(LDSCRIPT) -Wl,-Map,$(BUILD_DIR)/$(OUT_NAME).map
+LDLIBS ?=
+
+# Opt-in main-call profiling; separate objects avoid reusing a normal crt0.
+PERF ?= 0
+ifeq ($(PERF),1)
+CRT0 := tools/perf_crt0.S
+BUILD_DIR = build_perf/$(OUT_NAME)
+override EXTRA_SRCS += tools/perf_report.c
+override CFLAGS += -mno-relax -msmall-data-limit=0
+endif
 
 SRC_BASE := $(notdir $(basename $(SRC)))
 CRT0_OBJ := $(BUILD_DIR)/crt0.o
 SRC_OBJ  := $(BUILD_DIR)/$(SRC_BASE).o
 EXTRA_SRCS_STRIPPED := $(strip $(EXTRA_SRCS))
 EXTRA_OBJS := $(foreach src,$(EXTRA_SRCS_STRIPPED),$(BUILD_DIR)/$(notdir $(basename $(src))).o)
+ifeq ($(PERF),1)
+# Profile options/workload sizes are often varied between runs. Always rebuild
+# these small firmware objects so changed flags cannot silently reuse old code.
+.PHONY: perf-rebuild
+perf-rebuild:
+$(CRT0_OBJ) $(SRC_OBJ) $(EXTRA_OBJS): perf-rebuild
+endif
 ELF      := $(BUILD_DIR)/$(OUT_NAME).elf
 BIN      := $(BUILD_DIR)/$(OUT_NAME).bin
 DISASM   := $(BUILD_DIR)/$(OUT_NAME).dis
 
-.PHONY: help all check-tools print-config elf bin mem games-menu vga-games-menu tetris-vga gomoku-vga breakout-vga snake-vga mines-vga bomber-vga sokoban-vga pacman-vga chess-vga test29-independent-stress disasm run-sim uart-mmio-tb vga-subsystem-tb clean
+.PHONY: help all check-tools print-config elf bin mem games-menu vga-games-menu tetris-vga gomoku-vga breakout-vga snake-vga mines-vga bomber-vga sokoban-vga pacman-vga chess-vga test29-independent-stress test30-control-side-effects test31-system-stress board-stress disasm run-sim uart-mmio-tb vga-subsystem-tb clean
 
 .DEFAULT_GOAL := all
 
@@ -74,6 +91,13 @@ help:
 	@echo "  make pacman-vga   : build TEST_FILES/mem_pacman_vga.mem"
 	@echo "  make chess-vga    : build TEST_FILES/mem_chess_vga.mem"
 	@echo "  make test29-independent-stress : build TEST_FILES/mem_test29_independent_system_stress.mem"
+	@echo "  make test30-control-side-effects : build TEST_FILES/mem_test30_control_side_effects.mem"
+	@echo "  make test31-system-stress : build bounded simulation stress image"
+	@echo "  make board-stress  : build continuous UART-reporting board stress image"
+	@echo "  make perf-suite    : build nine main-profiling firmware images"
+	@echo "  make perf-tb       : verify PMU, RV32IM retirement traces, and UART reports"
+	@echo "  make coremark      : build official CoreMark auto-calibrated board images"
+	@echo "  make coremark-tb   : short CRC/timing A/B simulation (not an official score)"
 	@echo "  make disasm       : generate disassembly ($(DISASM))"
 	@echo "  make run-sim      : run main TB with +MEMFILE=$(MEM_OUT)"
 	@echo "  make uart-mmio-tb : run dedicated UART MMIO regression TB"
@@ -87,6 +111,7 @@ help:
 	@echo "  OUT_NAME=game"
 	@echo "  MEM_OUT=TEST_FILES/mem_game.mem"
 	@echo "  APP_DEFINES=-DGAME_USE_UART"
+	@echo "  PERF=1             : profile all of main and report after return"
 	@echo "  LOCAL_TOOLCHAIN_BIN=toolchain/xpack-riscv-none-elf-gcc/bin"
 	@echo "  TOOLCHAIN_BIN=$(TOOLCHAIN_BIN)"
 	@echo "  CC_PREFIX=$(CC_PREFIX)"
@@ -105,6 +130,7 @@ print-config:
 	@echo "SRC=$(SRC)"
 	@echo "EXTRA_SRCS=$(EXTRA_SRCS)"
 	@echo "CRT0=$(CRT0)"
+	@echo "PERF=$(PERF)"
 	@echo "LDSCRIPT=$(LDSCRIPT)"
 	@echo "BUILD_DIR=$(BUILD_DIR)"
 	@echo "OUT_NAME=$(OUT_NAME)"
@@ -140,7 +166,7 @@ $(foreach src,$(EXTRA_SRCS_STRIPPED),$(eval $(call EXTRA_COMPILE_RULE,$(src))))
 
 $(ELF): check-tools $(CRT0_OBJ) $(SRC_OBJ) $(EXTRA_OBJS) $(LDSCRIPT)
 	$(PYTHON) -c "import os; os.makedirs(r'$(BUILD_DIR)', exist_ok=True)"
-	$(CC) $(LDFLAGS) -o $@ $(CRT0_OBJ) $(SRC_OBJ) $(EXTRA_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(CRT0_OBJ) $(SRC_OBJ) $(EXTRA_OBJS) $(LDLIBS)
 
 elf: $(ELF)
 	@echo "Built: $(ELF)"
@@ -156,6 +182,9 @@ $(MEM_OUT): $(BIN)
 
 mem: $(MEM_OUT)
 	@echo "Built: $(MEM_OUT)"
+ifeq ($(PERF),1)
+	$(PYTHON) tools/write_perf_manifest.py --mem "$(MEM_OUT)" --source "$(SRC)" --flags "$(CFLAGS)" --compiler "$(CC)" --extra "$(EXTRA_SRCS)"
+endif
 
 games-menu:
 	$(MAKE) GAME_DIR=$(GAME_DIR) SRC=$(GAME_DIR)/games_menu.c EXTRA_SRCS="$(GAMES_MENU_EXTRA_SRCS)" OUT_NAME=games_menu MEM_OUT=TEST_FILES/mem_games_menu.mem mem
@@ -193,6 +222,15 @@ chess-vga:
 test29-independent-stress:
 	$(MAKE) SRC=TEST_FILES/prog_test29_independent_system_stress.c OUT_NAME=test29_independent_system_stress MEM_OUT=TEST_FILES/mem_test29_independent_system_stress.mem APP_DEFINES= mem
 
+test30-control-side-effects:
+	$(MAKE) SRC=TEST_FILES/prog_test30_control_side_effects.S OUT_NAME=test30_control_side_effects MEM_OUT=TEST_FILES/mem_test30_control_side_effects.mem APP_DEFINES= mem
+
+test31-system-stress:
+	$(MAKE) BUILD_DIR=build_os/test31_sim SRC=TEST_FILES/prog_test31_system_stress.c OUT_NAME=test31_system_stress MEM_OUT=TEST_FILES/mem_test31_system_stress.mem APP_DEFINES=-DSTRESS_SIM mem
+
+board-stress:
+	$(MAKE) BUILD_DIR=build_os/board_stress SRC=TEST_FILES/prog_test31_system_stress.c OUT_NAME=board_stress MEM_OUT=TEST_FILES/mem_board_stress.mem APP_DEFINES= mem
+
 $(DISASM): $(ELF)
 	$(OBJDUMP) -D $< > $@
 
@@ -209,6 +247,26 @@ uart-mmio-tb: | $(BUILD_DIR)
 vga-subsystem-tb: | $(BUILD_DIR)
 	iverilog -g2005-sv -o $(BUILD_DIR)/vga_subsystem_tb.out -s vga_subsystem_tb vga_subsystem_tb.v vga_subsystem.v clkdiv.v vga_640x480.v vga_initials.v
 	vvp $(BUILD_DIR)/vga_subsystem_tb.out
+
+.PHONY: perf-suite perf-tb
+perf-suite:
+	$(PYTHON) tools/run_perf_verification.py --build-only
+
+perf-tb:
+	$(PYTHON) -m unittest discover -s tools -p perf_tools_test.py -v
+	$(PYTHON) -c "from pathlib import Path; Path('build_perf').mkdir(exist_ok=True)"
+	iverilog -g2005-sv -s icache_redirect_race_tb -o build_perf/icache_redirect_race.out icache_redirect_race_tb.v icache.v
+	vvp build_perf/icache_redirect_race.out
+	$(PYTHON) tools/run_perf_verification.py
+
+.PHONY: coremark coremark-short coremark-tb
+coremark:
+	$(PYTHON) tools/build_coremark.py
+coremark-short:
+	$(PYTHON) tools/build_coremark.py --iterations 1
+coremark-tb:
+	$(PYTHON) -m unittest discover -s tools -p perf_tools_test.py -v
+	$(PYTHON) tools/run_coremark_verification.py
 
 clean:
 	$(PYTHON) -c "import shutil; shutil.rmtree(r'$(BUILD_DIR)', ignore_errors=True)"

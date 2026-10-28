@@ -16,18 +16,61 @@ except ImportError:
     msvcrt = None
 
 SYNC_WORD = 0xC0DE5A5A
+MAX_PAYLOAD_BYTES = 8 * 1024 * 1024
 
 
 def load_mem(path):
     data = bytearray()
-    with open(path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("//"):
+    with open(path, "r", encoding="ascii") as f:
+        for line_number, line in enumerate(f, start=1):
+            line = line.partition("//")[0].strip()
+            if not line:
                 continue
-            word = int(line, 16) & 0xFFFFFFFF
+            try:
+                word = int(line, 16)
+            except ValueError as exc:
+                raise ValueError(
+                    f"{path}:{line_number}: expected one 32-bit hexadecimal word"
+                ) from exc
+            if not 0 <= word <= 0xFFFFFFFF:
+                raise ValueError(
+                    f"{path}:{line_number}: value does not fit in 32 bits: {line}"
+                )
             data += word.to_bytes(4, "little")
+            if len(data) > MAX_PAYLOAD_BYTES:
+                raise ValueError(
+                    f"{path}: payload exceeds bootloader limit of "
+                    f"{MAX_PAYLOAD_BYTES} bytes"
+                )
     return data
+
+
+def write_all(ser, data, description="data"):
+    """Write all bytes and turn a short/zero serial write into a hard error."""
+    view = memoryview(data)
+    sent = 0
+    while sent < len(view):
+        count = ser.write(view[sent:])
+        if count is None or count <= 0:
+            raise serial.SerialTimeoutException(
+                f"serial write stopped after {sent}/{len(view)} bytes of {description}"
+            )
+        sent += count
+    return sent
+
+
+def write_chunks(ser, data, chunk_size, chunk_delay, sleep_fn=time.sleep):
+    """Send payload in bounded chunks, optionally leaving a physical idle gap."""
+    if chunk_size <= 0:
+        raise ValueError("chunk_size must be greater than zero")
+    for offset in range(0, len(data), chunk_size):
+        chunk = data[offset:offset + chunk_size]
+        write_all(ser, chunk, "payload")
+        if chunk_delay > 0 and offset + len(chunk) < len(data):
+            # flush() waits for the OS/USB-UART transmit queue.  Without it,
+            # sleeping only slows Python while the driver remains fully queued.
+            ser.flush()
+            sleep_fn(chunk_delay)
 
 
 def listen_for_rx(ser, idle_seconds):
@@ -131,8 +174,18 @@ def main():
     p.add_argument("--port", required=True, help="UART port, e.g. COM3")
     p.add_argument("--baud", type=int, default=115200)
     p.add_argument("--mem", required=True, help="mem file with 32-bit hex words")
-    p.add_argument("--delay", type=float, default=0.0, help="delay before send (sec)")
-    p.add_argument("--preamble", type=int, default=64, help="number of 0x55 bytes before sync")
+    p.add_argument("--delay", type=float, default=1.0,
+                   help="wait after opening the port before send (default: 1.0 sec)")
+    p.add_argument("--preamble", type=int, default=4096,
+                   help="number of 0x55 bytes before sync (default: 4096)")
+    p.add_argument("--sync-gap", type=float, default=0.05,
+                   help="idle gap after the preamble and before sync (default: 0.05 sec)")
+    p.add_argument("--chunk-size", type=int, default=256,
+                   help="payload bytes per paced chunk (default: 256)")
+    p.add_argument("--chunk-delay", type=float, default=0.001,
+                   help="idle gap between payload chunks (default: 0.001 sec)")
+    p.add_argument("--write-timeout", type=float, default=10.0,
+                   help="serial write timeout (default: 10 sec)")
     p.add_argument("--zero", action="store_true", help="send sync + zero length only")
     p.add_argument("--listen", action="store_true",
                    help="keep the port open after upload and print RX bytes")
@@ -144,12 +197,22 @@ def main():
                    help="override the interactive input hint text")
     args = p.parse_args()
 
+    if args.delay < 0 or args.sync_gap < 0 or args.chunk_delay < 0:
+        p.error("delay values must not be negative")
+    if args.preamble < 0:
+        p.error("--preamble must not be negative")
+    if args.chunk_size <= 0:
+        p.error("--chunk-size must be greater than zero")
+    if args.write_timeout <= 0:
+        p.error("--write-timeout must be greater than zero")
+
     payload = b"" if args.zero else load_mem(args.mem)
     length = len(payload)
     sync = struct.pack("<I", SYNC_WORD)
     hdr = struct.pack("<I", length)
 
-    with serial.Serial(args.port, args.baud, timeout=1) as ser:
+    with serial.Serial(args.port, args.baud, timeout=1,
+                       write_timeout=args.write_timeout) as ser:
         # Keep sideband control lines inactive during upload.
         try:
             ser.dtr = False
@@ -164,13 +227,17 @@ def main():
         if args.delay > 0:
             time.sleep(args.delay)
         if args.preamble > 0:
-            ser.write(b"\x55" * args.preamble)
-        ser.write(sync)
-        ser.write(hdr)
-        ser.write(payload)
+            write_all(ser, b"\x55" * args.preamble, "preamble")
+            ser.flush()
+            if args.sync_gap > 0:
+                time.sleep(args.sync_gap)
+        write_all(ser, sync + hdr, "sync/header")
+        write_chunks(ser, payload, args.chunk_size, args.chunk_delay)
         ser.flush()
         mode = "zero-length" if args.zero else f"{length} bytes from {args.mem}"
-        print(f"Sent sync+{mode} to {args.port} @ {args.baud}")
+        print(f"Host transmission completed: sync+{mode} to {args.port} @ {args.baud}")
+        print("Note: the current FPGA boot protocol has no host-visible ACK/CRC; "
+              "confirm boot_done/status LEDs on the board.", file=sys.stderr)
         if args.listen:
             listen_for_rx(ser, args.listen_seconds)
         if args.interactive:

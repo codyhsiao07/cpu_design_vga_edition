@@ -309,6 +309,8 @@ powershell -ExecutionPolicy Bypass -File tools/run_long_verification.ps1 `
 | 26   | `mem_test26_mixed_stress.mem`              | mixed stress hash check。              |
 | 27   | `mem_test27_full_system_stress.mem`        | full-system stress。                   |
 | 29   | `mem_test29_independent_system_stress.mem` | independent full-system stress。       |
+| 30   | `mem_test30_control_side_effects.mem`      | wrong-path store、load-to-control、predictor recovery、cache-line edge。 |
+| 31   | `mem_test31_system_stress.mem`             | self-checking RV32IM、DDR pattern、dirty cache thrash、UART board-stress bounded build。 |
 
 目前沒有 TEST28 的 `icache_pipeline_tb` entry。TEST28 是 RV32M smoke build / disassembly check，由 `tools/run_muldiv_verification.ps1` 使用。
 
@@ -330,6 +332,9 @@ powershell -ExecutionPolicy Bypass -File tools/run_long_verification.ps1 `
 | `+ASSERT_EN=1`         | 啟用 testbench assertions。       |
 | `+STALL_WDOG=N`        | request stall watchdog。          |
 | `+RD_WDOG=N`           | read response watchdog。          |
+| `+MID_RESET_AFTER=N`   | 啟動後第 N cycle 注入一次 reset。 |
+| `+MID_RESET_CYCLES=N`  | reset pulse 持續 cycle 數。       |
+| `+RESET_ON_DMEM=1`     | 偵測到 active data request 時注入 reset。 |
 | `+TRACE_EN=1`          | 輸出 commit trace。               |
 | `+TRACE_FILE=path`     | commit trace 輸出路徑。           |
 | `+COV_EN=1`            | 輸出 coverage summary。           |
@@ -379,3 +384,11 @@ report_utilization
 - Icarus simulation 不會證明 DDR2 實體 timing closure。
 - VGA framebuffer CDC 最好在 Vivado synthesis 後確認推成預期的 block RAM / dual-port RAM 類結構。
 
+
+## Main 效能監測驗證
+
+`make perf-tb` 會執行 host 工具測試、`performance_monitor_tb` 與完整 CPU/cache/L2/MIG/UART 系統 TB。
+9 個程式各跑 deterministic 加兩個 random seed，共 27 次；退休 PC/register write 逐條
+與獨立 RV32IM interpreter 比對，並從 UART TX pin 解碼、核對報告與凍結快照。
+操作、MMIO 與計數定義請見 [PERFORMANCE_MONITOR.md](PERFORMANCE_MONITOR.md)。
+新的 `performance_monitor.v` 也必須加入手動維護的 RTL source list。

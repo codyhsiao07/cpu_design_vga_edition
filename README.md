@@ -17,6 +17,7 @@
 - 透過 Xilinx MIG native `app_*` interface 存取 DDR2。
 - UART bootloader：透過 USB-UART 將 `.mem` 載入 DDR2。
 - UART MMIO：bare-metal C 程式可做文字輸入/輸出。
+- main 全程效能監測：退休／cycles、cache、分支與等待統計，返回後透過 UART 輸出。
 - VGA framebuffer：支援簡單圖形/game demo。
 - Icarus Verilog 回歸腳本與 Vivado FPGA bring-up 文件。
 
@@ -42,6 +43,9 @@
 | [VIVADO_SETUP.md](docs/VIVADO_SETUP.md) | Vivado project、Clocking Wizard、DDR2 MIG、bitstream 設定。 |
 | [BOARD_IO.md](docs/BOARD_IO.md) | Board pins、XDC 選擇、LED 診斷燈號、VGA/UART/DDR2 I/O。 |
 | [API_UART_VGA.md](docs/API_UART_VGA.md) | UART/VGA bare-metal API、include/source 檔案、範例。 |
+| [PERFORMANCE_MONITOR.md](docs/PERFORMANCE_MONITOR.md) | main 效能量測、UART 報告、測試程式、TB 與實板操作。 |
+| [PERFORMANCE_VERIFICATION.md](docs/PERFORMANCE_VERIFICATION.md) | 本次效能監測驗證結果、模擬數據與 synthesis 範圍。 |
+| [STANDARD_BENCHMARKS.md](docs/STANDARD_BENCHMARKS.md) | 官方 CoreMark 移植、標準計時、取指改良與 A/B 比較。 |
 | [C_TO_MEM_BUILD_FLOW.md](docs/C_TO_MEM_BUILD_FLOW.md) | 一般 C 程式如何編譯成 `.mem`。 |
 | [CLOCKING_AND_CDC.md](docs/CLOCKING_AND_CDC.md) | Clock domains、CDC、VGA framebuffer single/double buffer 說明。 |
 | [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Toolchain、simulation、Vivado、DDR2、UART、VGA 常見問題排查。 |
@@ -240,6 +244,7 @@ python uart_send_mem.py --port COM5 --baud 115200 --mem TEST_FILES/mem_vga_games
 | `0x4000_000C` | UART RX status。 |
 | `0x4000_0010` | Launcher button/status MMIO。 |
 | `0x4000_0014` | Launcher reset request MMIO。 |
+| `0x4001_0000..0x4001_0FFF` | 效能監測器 MMIO。 |
 | `0x5000_0000` | VGA framebuffer base。 |
 | `0x5000_7FFC` | VGA framebuffer control / display buffer select。 |
 

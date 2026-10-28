@@ -2,7 +2,7 @@
 // icache_pipeline_tb.v
 // Simple TB to verify I$ + pipeline integration.
 
-module icache_pipeline_tb;
+module icache_pipeline_tb #(parameter PERF_MODE = 0, parameter FETCH_OVERLAP_EN = 0);
   localparam ADDR_WIDTH = 32;
   localparam L2_DATA_W  = 64;
   localparam MEM_WORDS  = 256;
@@ -75,6 +75,7 @@ module icache_pipeline_tb;
     .ADDR_WIDTH (ADDR_WIDTH),
     .L2_DATA_W  (L2_DATA_W),
     .USE_MIG    (USE_MIG),
+    .FETCH_OVERLAP_EN(FETCH_OVERLAP_EN),
     .BOOT_RELEASE_CYCLES(1),
     .RESET_PC   (RESET_PC)
   ) dut (
@@ -276,6 +277,9 @@ module icache_pipeline_tb;
   reg [8*64-1:0] memfile_try;
   reg            memfile_found;
   integer max_cycles;
+  integer mid_reset_after;
+  integer mid_reset_cycles;
+  integer reset_on_dmem;
   integer memfile_fd;
   integer rand_mem_en;
   integer rand_seed;
@@ -749,6 +753,9 @@ module icache_pipeline_tb;
     expect_val = 32'h00000011;
     require_linefill = 1'b1;
     max_cycles = 2000;
+    mid_reset_after = 0;
+    mid_reset_cycles = 4;
+    reset_on_dmem = 0;
     i_delay_cfg = 0;
     d_delay_cfg = 0;
     rand_mem_en = 0;
@@ -964,6 +971,23 @@ module icache_pipeline_tb;
         require_linefill = 1'b0;
         max_cycles = 300000;
       end
+      30: begin
+        // Independent control-hazard test: wrong-path stores, load-to-branch,
+        // load-to-JALR, predictor recovery, and cache-line edge accesses.
+        memfile = "TEST_FILES/mem_test30_control_side_effects.mem";
+        expect_rd = 5'd10;
+        expect_val = 32'h3000C0DE;
+        require_linefill = 1'b0;
+        max_cycles = 30000;
+      end
+      31: begin
+        // Self-checking bounded build of the board stress firmware.
+        memfile = "TEST_FILES/mem_test31_system_stress.mem";
+        expect_rd = 5'd10;
+        expect_val = 32'h3100C0DE;
+        require_linefill = 1'b1;
+        max_cycles = 2000000;
+      end
       default: begin
       end
     endcase
@@ -978,6 +1002,15 @@ module icache_pipeline_tb;
     end
     if ($value$plusargs("MAXCYCLES=%d", max_cycles)) begin
       // override timeout
+    end
+    if ($value$plusargs("MID_RESET_AFTER=%d", mid_reset_after)) begin
+      // optional one-shot reset injection after initial reset release
+    end
+    if ($value$plusargs("MID_RESET_CYCLES=%d", mid_reset_cycles)) begin
+      // reset pulse width in core clock cycles
+    end
+    if ($value$plusargs("RESET_ON_DMEM=%d", reset_on_dmem)) begin
+      // inject reset immediately after observing an active CPU data request
     end
     if ($value$plusargs("I_RSP_DELAY=%d", i_delay_cfg)) begin
       // fixed I$ response delay
@@ -1137,6 +1170,28 @@ module icache_pipeline_tb;
 
     repeat (4) @(posedge clk);
     rst_n = 1'b1;
+    if (reset_on_dmem != 0) begin
+      fork
+        begin : DMEM_ACTIVE_RESET_INJECT
+          wait (rst_n && dut.dmem_req_o);
+          @(posedge clk);
+          $display("[TB] injecting reset during active dmem request for %0d cycles", mid_reset_cycles);
+          rst_n = 1'b0;
+          repeat (mid_reset_cycles) @(posedge clk);
+          rst_n = 1'b1;
+        end
+      join_none
+    end else if (mid_reset_after > 0) begin
+      fork
+        begin : MID_RUN_RESET_INJECT
+          repeat (mid_reset_after) @(posedge clk);
+          $display("[TB] injecting mid-run reset for %0d cycles", mid_reset_cycles);
+          rst_n = 1'b0;
+          repeat (mid_reset_cycles) @(posedge clk);
+          rst_n = 1'b1;
+        end
+      join_none
+    end
   end
 
   // Cycle counter + timeout
@@ -1156,6 +1211,7 @@ module icache_pipeline_tb;
 
   always @(posedge clk) begin
     if (rst_n && (cycles > max_cycles)) begin
+      if (PERF_MODE != 0) $fatal(1, "performance system timeout");
       $display("TIMEOUT");
       tb_finish;
     end
@@ -1221,8 +1277,8 @@ module icache_pipeline_tb;
       cov_wb_commits <= cov_wb_commits + 1;
       if ((trace_en != 0) && (trace_fd != 0))
         $fdisplay(trace_fd, "%0d %0d %08x", cycles, wb_rd, wb_wdata);
-      $display("WB: x%0d <= 0x%08x", wb_rd, wb_wdata);
-      if ((wb_rd == expect_rd) && (wb_wdata == expect_val)) begin
+      if (PERF_MODE == 0) $display("WB: x%0d <= 0x%08x", wb_rd, wb_wdata);
+      if ((PERF_MODE == 0) && (wb_rd == expect_rd) && (wb_wdata == expect_val)) begin
         if (require_linefill && (linefill_cnt == 0)) begin
           $display("FAIL: no I$ linefill observed");
           tb_finish;
@@ -1845,6 +1901,8 @@ module mig_7series_0_mig (
           26: begin memfile = "TEST_FILES/mem_test26_mixed_stress.mem";    memfile_base = "mem_test26_mixed_stress.mem"; end
           27: begin memfile = "TEST_FILES/mem_test27_full_system_stress.mem"; memfile_base = "mem_test27_full_system_stress.mem"; end
           29: begin memfile = "TEST_FILES/mem_test29_independent_system_stress.mem"; memfile_base = "mem_test29_independent_system_stress.mem"; end
+          30: begin memfile = "TEST_FILES/mem_test30_control_side_effects.mem"; memfile_base = "mem_test30_control_side_effects.mem"; end
+          31: begin memfile = "TEST_FILES/mem_test31_system_stress.mem"; memfile_base = "mem_test31_system_stress.mem"; end
           default: begin memfile = "program_ddr.mem"; memfile_base = "program_ddr.mem"; end
         endcase
       end else begin

@@ -69,6 +69,32 @@ function Invoke-Tb {
   return $logPath
 }
 
+function Invoke-PythonTest {
+  param(
+    [string]$TestFile,
+    [string]$LogName
+  )
+
+  $logPath = Join-Path $OutDir $LogName
+  # unittest writes its normal verbose progress to stderr.  Windows PowerShell
+  # wraps native stderr as non-terminating ErrorRecord objects, which conflicts
+  # with the script-wide ErrorActionPreference=Stop unless relaxed locally.
+  $savedErrorPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = "Continue"
+    $lines = & $PythonExe "-m" "unittest" "-v" $TestFile 2>&1
+    $pythonExitCode = $LASTEXITCODE
+  } finally {
+    $ErrorActionPreference = $savedErrorPreference
+  }
+  $lines | Set-Content -Path $logPath
+  if ($pythonExitCode -ne 0) {
+    throw "Python test failed for $TestFile. See $logPath"
+  }
+
+  return $logPath
+}
+
 function Invoke-SmokeBuild {
   $elf = Join-Path $OutDir "test28_muldiv_smoke.elf"
   $bin = Join-Path $OutDir "test28_muldiv_smoke.bin"
@@ -137,6 +163,10 @@ $results += [pscustomobject]@{ Name = "bp_redirect_scenarios_tb"; Log = Invoke-T
 $results += [pscustomobject]@{ Name = "uart_bootloader_tb"; Log = Invoke-Tb -Top "uart_bootloader_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
 $results += [pscustomobject]@{ Name = "uart_bootloader_stall_tb"; Log = Invoke-Tb -Top "uart_bootloader_stall_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
 $results += [pscustomobject]@{ Name = "icache_tb"; Log = Invoke-Tb -Top "icache_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
+$results += [pscustomobject]@{ Name = "dcache_tb"; Log = Invoke-Tb -Top "dcache_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
+$results += [pscustomobject]@{ Name = "l2_arb_tb"; Log = Invoke-Tb -Top "l2_arb_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
+$results += [pscustomobject]@{ Name = "vga_subsystem_tb"; Log = Invoke-Tb -Top "vga_subsystem_tb" -Sources @(Get-VerilogSources); Status = "PASS" }
+$results += [pscustomobject]@{ Name = "uart_send_mem_test"; Log = Invoke-PythonTest -TestFile "uart_send_mem_test.py" -LogName "uart_send_mem_test.log"; Status = "PASS" }
 
 Invoke-CompileOnly -Top "icache_pipeline_top" -OutName "icache_pipeline_top_check.out"
 $results += [pscustomobject]@{ Name = "icache_pipeline_top_compile"; Log = Join-Path $OutDir "icache_pipeline_top_check.out"; Status = "PASS" }
