@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "schema": 1,
+    "status": 4,
+    "return": 43,
+    "core_hz": 100000000,
+    "ic_bytes": 8192,
+    "dc_bytes": 8192,
+    "l2_bytes": 16384
+  },
+  "counters": {
+    "cycles": 11,
+    "instructions": 3,
+    "ic_access": 5,
+    "ic_miss": 0,
+    "dc_load": 0,
+    "dc_load_miss": 0,
+    "dc_store": 0,
+    "dc_store_miss": 0,
+    "branches": 0,
+    "branch_misses": 0,
+    "frontend_wait": 5,
+    "memory_wait": 0,
+    "load_use_wait": 0,
+    "multiply_wait": 0,
+    "divide_wait": 0
+  },
+  "metrics": {
+    "seconds": 1.1e-07,
+    "cpi": 3.6666666666666665,
+    "ipc": 0.2727272727272727,
+    "ic_miss_percent": 0.0,
+    "dc_load_miss_percent": null,
+    "dc_store_miss_percent": null,
+    "branch_miss_percent": null
+  },
+  "program": "tail",
+  "validation": "PASS",
+  "seed": 1,
+  "hardware_variant": "fetch_overlap",
+  "source": "TEST_FILES/prog_perf_tail.S",
+  "app_defines": "",
+  "compiler_flags": "rv32im ilp32 -O2 -mno-relax -msmall-data-limit=0"
+}

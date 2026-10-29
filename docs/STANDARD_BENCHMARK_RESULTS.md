@@ -4,6 +4,13 @@
 10 秒，不是正式 CoreMark 分數，也不是已量到的 FPGA 提升。板上操作與正式 A/B
 步驟見 [STANDARD_BENCHMARKS.md](STANDARD_BENCHMARKS.md)。
 
+新乘法器的正式長時間實板執行已另記於
+[COREMARK_BOARD_BASELINE.md](COREMARK_BOARD_BASELINE.md)，後續取指實驗以該 OFF 基準比較。
+以下保留先前短 RTL 取指 A/B 的歷史紀錄。
+
+2026-10-29 三槽位／hit-under-miss 的新版驗證見
+[FETCH_THREE_SLOTS_RESULTS.md](FETCH_THREE_SLOTS_RESULTS.md)，與本文先前單筆同拍交接實驗分開記錄。
+
 ## 固定條件
 
 - 官方 CoreMark commit：`1f483d5b8316753a742cbf5590caf5bd0a4e4777`，核心原始碼未修改。
@@ -104,7 +111,7 @@ opt_design，`USE_MIG=0`、`USE_VGA=0`、`UART_BOOT_EN=0`：
 
 這次沒有執行完整 board/MIG 的 place-and-route，也沒有取得完整板級 timing/CDC
 報告，不能據此宣稱改良版已達到板上 50 MHz。兩版實際 FPGA 時間差與正式
-CoreMark 結果仍待依操作文件上板量測。
+CoreMark 的取指 overlap OFF/ON 實板比較仍待依操作文件量測。
 
 CoreMark 工作集只有 2000 bytes，能放入目前 D-cache。後續要用不同程式型態
 補足結論，可再移植 Embench-IoT 的多個 workload；DDR／cache 容量與寫入策略

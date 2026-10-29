@@ -104,6 +104,8 @@ def display(report):
     print(f"Core: {m['core_hz']:,} Hz   I/D/L2: {m['ic_bytes']}/{m['dc_bytes']}/{m['l2_bytes']} bytes")
     if 'features' in m:
         print(f"Fetch overlap: {'ON' if m['features'] & 1 else 'OFF'} (hardware-reported)")
+        if m['features'] & 2:
+            print('Fetch queue: 3 ordered slots; I-cache/L2 hit-under-miss')
     print(f"Cycles: {c['cycles']:,}   Retired instructions: {c['instructions']:,}")
     print(f"Time: {v['seconds']:.9f} s   CPI: {v['cpi']:.6f}   IPC: {v['ipc']:.6f}")
     for label, miss, access, metric in [

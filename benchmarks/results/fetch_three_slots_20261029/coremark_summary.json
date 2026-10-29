@@ -1,0 +1,111 @@
+{
+  "short_validation_only": true,
+  "runs": [
+    {
+      "kind": "performance",
+      "variant": "baseline",
+      "seed": 0,
+      "kernel_us": 16373,
+      "cycles": 2171466,
+      "instructions": 397669,
+      "image_sha256": "0e97eaad1576e3824b3faf73c412bef44cd54f3aa13209e07beff73375f45cae"
+    },
+    {
+      "kind": "performance",
+      "variant": "fetch_overlap",
+      "seed": 0,
+      "kernel_us": 9935,
+      "cycles": 1477231,
+      "instructions": 432413,
+      "image_sha256": "0e97eaad1576e3824b3faf73c412bef44cd54f3aa13209e07beff73375f45cae"
+    },
+    {
+      "kind": "performance",
+      "variant": "baseline",
+      "seed": 1,
+      "kernel_us": 16375,
+      "cycles": 2172041,
+      "instructions": 397669,
+      "image_sha256": "0e97eaad1576e3824b3faf73c412bef44cd54f3aa13209e07beff73375f45cae"
+    },
+    {
+      "kind": "performance",
+      "variant": "fetch_overlap",
+      "seed": 1,
+      "kernel_us": 9937,
+      "cycles": 1477832,
+      "instructions": 432413,
+      "image_sha256": "0e97eaad1576e3824b3faf73c412bef44cd54f3aa13209e07beff73375f45cae"
+    },
+    {
+      "kind": "validation",
+      "variant": "baseline",
+      "seed": 0,
+      "kernel_us": 16391,
+      "cycles": 2172677,
+      "instructions": 397646,
+      "image_sha256": "fe86833e06ac73fc8e9a869929da5aeb06c2958344c49c230b003fc69a8b453b"
+    },
+    {
+      "kind": "validation",
+      "variant": "fetch_overlap",
+      "seed": 0,
+      "kernel_us": 9960,
+      "cycles": 1479109,
+      "instructions": 432300,
+      "image_sha256": "fe86833e06ac73fc8e9a869929da5aeb06c2958344c49c230b003fc69a8b453b"
+    },
+    {
+      "kind": "validation",
+      "variant": "baseline",
+      "seed": 1,
+      "kernel_us": 16393,
+      "cycles": 2173217,
+      "instructions": 397646,
+      "image_sha256": "fe86833e06ac73fc8e9a869929da5aeb06c2958344c49c230b003fc69a8b453b"
+    },
+    {
+      "kind": "validation",
+      "variant": "fetch_overlap",
+      "seed": 1,
+      "kernel_us": 9962,
+      "cycles": 1479693,
+      "instructions": 432300,
+      "image_sha256": "fe86833e06ac73fc8e9a869929da5aeb06c2958344c49c230b003fc69a8b453b"
+    }
+  ],
+  "comparisons": [
+    {
+      "kind": "performance",
+      "seed": 0,
+      "baseline_us": 16373,
+      "overlap_us": 9935,
+      "kernel_speedup": 1.6480120785103172,
+      "kernel_time_reduction_percent": 39.320833078849326
+    },
+    {
+      "kind": "performance",
+      "seed": 1,
+      "baseline_us": 16375,
+      "overlap_us": 9937,
+      "kernel_speedup": 1.647881654422864,
+      "kernel_time_reduction_percent": 39.31603053435114
+    },
+    {
+      "kind": "validation",
+      "seed": 0,
+      "baseline_us": 16391,
+      "overlap_us": 9960,
+      "kernel_speedup": 1.6456827309236948,
+      "kernel_time_reduction_percent": 39.23494600695504
+    },
+    {
+      "kind": "validation",
+      "seed": 1,
+      "baseline_us": 16393,
+      "overlap_us": 9962,
+      "kernel_speedup": 1.6455531017867897,
+      "kernel_time_reduction_percent": 39.23015921429879
+    }
+  ]
+}

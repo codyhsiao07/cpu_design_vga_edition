@@ -301,6 +301,10 @@ module icache_pipeline_top #(
   // Uncached indicator for D$ (derived from cmd)
   wire d_l2_req_uncached = (d_l2_req_cmd == 2'b01) || (d_l2_req_cmd == 2'b10);
 
+  wire i_probe_valid, i_probe_ready, i_probe_rsp_valid, i_probe_rsp_ready, i_probe_rsp_hit;
+  wire [31:0] i_probe_addr;
+  wire [511:0] i_probe_rsp_line;
+
   // ---------------- MIG / L2 integration ----------------
   generate
     if (USE_MIG) begin : GEN_MIG
@@ -395,11 +399,14 @@ module icache_pipeline_top #(
       assign core_rst_n_base = rst_n & ~ui_clk_sync_rst & init_calib_complete & boot_release_ok_q;
 
       // L2 + arbitration
-      l2_cache_top u_l2 (
+      l2_cache_top #(.FETCH_OVERLAP_EN(FETCH_OVERLAP_EN)) u_l2 (
         .clk (core_clk),
         .rst (core_rst),
         .init_calib_complete (init_calib_complete),
 
+        .probe_valid(i_probe_valid), .probe_ready(i_probe_ready), .probe_addr(i_probe_addr),
+        .probe_rsp_valid(i_probe_rsp_valid), .probe_rsp_ready(i_probe_rsp_ready),
+        .probe_rsp_hit(i_probe_rsp_hit), .probe_rsp_line(i_probe_rsp_line),
         .i_req_valid(l2_req_valid),
         .i_req_ready(i_l2_req_ready_int),
         .i_req_cmd (l2_req_cmd),
@@ -584,6 +591,18 @@ module icache_pipeline_top #(
       assign app_wdf_wren = memtest_active_w ? app_wdf_wren_memtest :
                             (boot_active_w ? app_wdf_wren_boot : app_wdf_wren_l2);
     end else begin : GEN_NO_MIG
+      // External legacy L2 interface has no independent hit probe.
+      assign i_probe_ready = 1'b1;
+      reg probe_pending_q;
+      always @(posedge core_clk) begin
+        if (!core_rst_n) probe_pending_q <= 1'b0;
+        else if (i_probe_valid && i_probe_ready) probe_pending_q <= 1'b1;
+        else if (i_probe_rsp_ready) probe_pending_q <= 1'b0;
+      end
+      assign i_probe_rsp_valid = probe_pending_q;
+      assign i_probe_rsp_hit = 1'b0;
+      assign i_probe_rsp_line = 512'd0;
+
       assign init_calib_complete = 1'b1;
       assign ui_clk = clk;
       assign ui_clk_sync_rst = 1'b0;
@@ -818,6 +837,7 @@ module icache_pipeline_top #(
   localparam integer I_CACHE_TAG_BITS_CFG = ADDR_WIDTH - 6 - I_CACHE_INDEX_BITS_CFG;
 
   icache_top #(
+    .FETCH_OVERLAP_EN(FETCH_OVERLAP_EN),
     .ADDR_WIDTH (ADDR_WIDTH),
     .L2_DATA_W  (L2_DATA_W),
     .CACHE_BYTES(I_CACHE_BYTES_CFG),
@@ -840,6 +860,9 @@ module icache_pipeline_top #(
     .fetch_resp_inst_o  (fetch_resp_inst),
     .fetch_resp_pc_o    (fetch_resp_pc),
     .fetch_resp_err_o   (fetch_resp_err),
+    .probe_valid(i_probe_valid), .probe_ready(i_probe_ready), .probe_addr(i_probe_addr),
+    .probe_rsp_valid(i_probe_rsp_valid), .probe_rsp_ready(i_probe_rsp_ready),
+    .probe_rsp_hit(i_probe_rsp_hit), .probe_rsp_line(i_probe_rsp_line),
     .l2_req_valid       (l2_req_valid),
     .l2_req_ready       (i_l2_req_ready_int),
     .l2_req_addr        (l2_req_addr),
@@ -874,28 +897,28 @@ module icache_pipeline_top #(
   // Redirect cancels the request via fetch_req_kill. Do not fold redirect into
   // fetch_req_valid itself; that duplicate gating created the worst setup path
   // into the I$ request accept/CE logic.
-  // Optional A/B experiment: launch the next request on the current response
-  // handshake. Still at most one outstanding fetch; no speculative FIFO added.
+  // Enabled: credit is owned by the three I$ result slots. Accept/pop may
+  // happen together, including when all slots were occupied before the edge.
   wire fetch_overlap_launch = (FETCH_OVERLAP_EN != 0) && fetch_resp_valid && fetch_resp_ready;
-  assign fetch_req_valid = (~if_pending | fetch_overlap_launch) & ~stall_if_hdu;
+  assign fetch_req_valid = ((FETCH_OVERLAP_EN != 0) || !if_pending) & ~stall_if_hdu;
   assign fetch_req_hs = fetch_req_valid & fetch_req_ready & ~fetch_req_kill;
+  reg [1:0] fetch_outstanding_q;
 
   always @(posedge core_clk or negedge core_rst_n) begin
     if (!core_rst_n) begin
       if_pending <= 1'b0;
-    end else begin
-      if (fe_redirect_valid) begin
-        if_pending <= 1'b0;
-      end else if ((FETCH_OVERLAP_EN != 0) && fetch_req_hs) begin
-        // With overlap a simultaneous response+request leaves one NEW request.
-        if_pending <= 1'b1;
-      end else if (fetch_resp_valid && fetch_resp_ready) begin
-        // Response wins: same-cycle request+response means no outstanding left.
-        if_pending <= 1'b0;
-      end else if (fetch_req_hs) begin
-        if_pending <= 1'b1;
-      end
-    end
+      fetch_outstanding_q <= 2'd0;
+    end else if (fe_redirect_valid) begin
+      if_pending <= 1'b0;
+      fetch_outstanding_q <= 2'd0;
+    end else if (FETCH_OVERLAP_EN != 0) begin
+      case ({fetch_req_hs, fetch_resp_valid && fetch_resp_ready})
+        2'b10: begin fetch_outstanding_q <= fetch_outstanding_q + 1'b1; if_pending <= 1'b1; end
+        2'b01: begin fetch_outstanding_q <= fetch_outstanding_q - 1'b1; if_pending <= (fetch_outstanding_q > 1); end
+        default: begin end
+      endcase
+    end else if (fetch_resp_valid && fetch_resp_ready) if_pending <= 1'b0;
+    else if (fetch_req_hs) if_pending <= 1'b1;
   end
 
   always @(posedge core_clk or negedge core_rst_n) begin
@@ -1029,8 +1052,10 @@ module icache_pipeline_top #(
     .redirect_valid_i (redirect_valid),
     .id_valid_i       (id_ready),
     .id_pc_i          (id_pc),
-    .id_rs1_val_i     (id_rs1_val),
-    .id_rs2_val_i     (id_rs2_val),
+    // Dense fetch exposes WB and ID on the same edge. Capture the value being
+    // written, rather than the pre-edge asynchronous register-file value.
+    .id_rs1_val_i     ((FETCH_OVERLAP_EN != 0 && rf_we && rf_waddr != 0 && rf_waddr == id_rs1) ? rf_wdata : id_rs1_val),
+    .id_rs2_val_i     ((FETCH_OVERLAP_EN != 0 && rf_we && rf_waddr != 0 && rf_waddr == id_rs2) ? rf_wdata : id_rs2_val),
     .id_imm_i         (id_imm),
     .id_rs1_i         (id_rs1),
     .id_rs2_i         (id_rs2),
@@ -1099,11 +1124,25 @@ module icache_pipeline_top #(
   wire [31:0] wb_wdata;
 
   wire [31:0] ex_rs1_val_fwd, ex_rs2_val_fwd;
+  reg ex_operand_hold_q;
+  reg [31:0] ex_operand1_q, ex_operand2_q;
+  always @(posedge core_clk or negedge core_rst_n) begin
+    if (!core_rst_n) begin
+      ex_operand_hold_q <= 1'b0;
+      ex_operand1_q <= 0; ex_operand2_q <= 0;
+    end else if (flush_idex || !stall_ex) ex_operand_hold_q <= 1'b0;
+    else if (FETCH_OVERLAP_EN != 0) begin
+      // An older WB pulse may disappear while this EX instruction is held by
+      // MEM or multiply/divide. Preserve forwarded operands across that hold.
+      ex_operand_hold_q <= 1'b1;
+      ex_operand1_q <= ex_rs1_val_fwd; ex_operand2_q <= ex_rs2_val_fwd;
+    end
+  end
   forward_unit u_fwd (
     .ex_rs1_idx_i     (ex_rs1),
     .ex_rs2_idx_i     (ex_rs2),
-    .ex_rs1_val_i     (ex_rs1_val),
-    .ex_rs2_val_i     (ex_rs2_val),
+    .ex_rs1_val_i     ((FETCH_OVERLAP_EN != 0 && ex_operand_hold_q) ? ex_operand1_q : ex_rs1_val),
+    .ex_rs2_val_i     ((FETCH_OVERLAP_EN != 0 && ex_operand_hold_q) ? ex_operand2_q : ex_rs2_val),
     .mem_valid_i      (mem_valid),
     .mem_reg_write_i  (mem_reg_write),
     .mem_wb_sel_i     (mem_wb_sel),
@@ -1600,7 +1639,7 @@ module icache_pipeline_top #(
 `endif
   performance_monitor #(
     .CORE_HZ(UART_CLK_HZ), .IC_BYTES(I_CACHE_BYTES_CFG),
-    .FEATURE_FLAGS((FETCH_OVERLAP_EN != 0) ? 32'h1 : 32'h0),
+    .FEATURE_FLAGS((FETCH_OVERLAP_EN != 0) ? 32'h3 : 32'h0),
     .DC_BYTES(D_CACHE_BYTES_CFG), .L2_BYTES(PERF_L2_BYTES)
   ) u_perf (
     .clk(core_clk), .rst_n(core_rst_n),
@@ -1673,12 +1712,17 @@ module icache_pipeline_top #(
   );
 
   // Front-end hold while an outstanding fetch exists or handshake is back-pressured.
-  assign stall_if    = stall_if_hdu | (if_pending & ~fetch_overlap_launch) | req_blocked | resp_blocked;
+  assign stall_if = (FETCH_OVERLAP_EN != 0) ? ~fetch_req_hs :
+                       (stall_if_hdu | if_pending | req_blocked | resp_blocked);
   assign stall_id    = stall_id_hdu;
   assign stall_ex    = stall_ex_hdu;
   assign stall_exmem = stall_exmem_hdu;
   assign flush_ifid  = flush_ifid_hdu;
-  assign flush_idex  = flush_idex_hdu;
+  // A load-use bubble may advance EX only when EX can advance. With queued
+  // fetch, a younger dependent ID instruction can arrive while that load is
+  // still held in EX behind an older MEM transaction; flushing then loses it.
+  assign flush_idex = (FETCH_OVERLAP_EN != 0) ?
+                     (redirect_valid | (flush_idex_hdu & ~stall_ex)) : flush_idex_hdu;
 
 `ifndef SYNTHESIS
   reg ifdbg_en;

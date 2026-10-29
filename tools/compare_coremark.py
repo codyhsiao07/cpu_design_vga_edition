@@ -21,8 +21,8 @@ def compare(base, opt, allow_short=False):
         if base['metadata'][key]!=opt['metadata'][key]:
             raise ValueError('platform configuration differs: '+key)
     a,b=base['metadata'].get('features'),opt['metadata'].get('features')
-    if a is None or b is None or a&1 or not b&1 or a^b != 1:
-        raise ValueError('hardware flags must differ only in fetch overlap: OFF -> ON')
+    if a is None or b is None or a&3 or not b&1 or a^b not in (1,3):
+        raise ValueError('hardware flags must differ only in fetch configuration: OFF -> overlap/three slots')
     aa,bb=base['benchmark'],opt['benchmark']
     if (aa['data_size'],aa['run_kind']) != (bb['data_size'],bb['run_kind']):
         raise ValueError('CoreMark seed/data configurations differ')

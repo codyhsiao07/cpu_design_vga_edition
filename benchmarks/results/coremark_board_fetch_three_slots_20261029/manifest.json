@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-29",
+  "timezone": "Asia/Taipei",
+  "measurement": "FPGA UART capture, 50 MHz",
+  "files": {
+    "off_performance.json": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_performance.json",
+      "sha256": "9a5a13fada5b1b42371b7d9d1b0b3d45a97e92f9a0c57a29f09d1769158ce0dc"
+    },
+    "off_performance.csv": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_performance.csv",
+      "sha256": "789af42106c3c05faca33b771616c2e169ddc112663577b96db56956126d021e"
+    },
+    "off_performance.uart.txt": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_performance.uart.txt",
+      "sha256": "999f055b934a3c8e42c22a8535a449709a6753197bfe3fb4f010e116fb307c91"
+    },
+    "on_performance.json": {
+      "source": "build_perf\\coremark_board\\baseline_performance\\coremark_performance_auto_20261029T072100467676Z.json",
+      "sha256": "a15f1e82899df5f81d80ed9b8ee89b0bb9efe0b3bc46a34151df10d926ce1221"
+    },
+    "on_performance.csv": {
+      "source": "build_perf\\coremark_board\\baseline_performance\\coremark_performance_auto_20261029T072100467676Z.csv",
+      "sha256": "2c1962a1d15bc3795c099a009048aee6a44e8c21f4bc8fca14637dc5fc420bf9"
+    },
+    "on_performance.uart.txt": {
+      "source": "build_perf\\coremark_board\\baseline_performance\\coremark_performance_auto_20261029T072100467676Z.uart.txt",
+      "sha256": "df26c288a1a494f9f7468a7275de109f25d0dc68c3b6bfcf2c96f47bcc7c73c8"
+    },
+    "off_validation.json": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_validation.json",
+      "sha256": "bbc2b7d519662b22ead333ffac870a9c5c0fceb28baeda322c2edee8dd6bc073"
+    },
+    "off_validation.csv": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_validation.csv",
+      "sha256": "1c570454192fee0dd2c8628843ab6fb48a9734b2093ade1c2c42f47d9fc00ec7"
+    },
+    "off_validation.uart.txt": {
+      "source": "benchmarks\\results\\coremark_board_20261028\\new_multiplier_validation.uart.txt",
+      "sha256": "00a29daed6fbd59a2e5a2afea46869c49ba6ad866b3969dee8d84a3ef2420c35"
+    },
+    "on_validation.json": {
+      "source": "build_perf\\coremark_board\\baseline_validation\\coremark_validation_auto_20261029T072314664460Z.json",
+      "sha256": "3d308fa51d3bd680dd6c3f642f9b8d385a568fceb388e3e53bf83683f5c51b41"
+    },
+    "on_validation.csv": {
+      "source": "build_perf\\coremark_board\\baseline_validation\\coremark_validation_auto_20261029T072314664460Z.csv",
+      "sha256": "ec3bab1a0798767f9de9861416ad0fb2ce787bb750ff5b7784d3dd46d6123402"
+    },
+    "on_validation.uart.txt": {
+      "source": "build_perf\\coremark_board\\baseline_validation\\coremark_validation_auto_20261029T072314664460Z.uart.txt",
+      "sha256": "f33a3147d4cb05914283b03928ddc8f5e4708fa796d2386b8f284d86c6acc274"
+    }
+  },
+  "comparisons": {
+    "performance": {
+      "timing_qualified": true,
+      "baseline_us_per_iteration": 32641.7625,
+      "overlap_us_per_iteration": 19773.13090909091,
+      "kernel_speedup": 1.6508140592440321,
+      "time_reduction_percent": 39.42382581488696,
+      "baseline_main_cpi": 5.628887807022485,
+      "overlap_main_cpi": 3.4124629360545393,
+      "image_sha256": "0176c81e3d6cb93542098189eee26e0ecf26f6d8cb624b240c6828358b56c4ff",
+      "note": "Iterations are normalized because automatic calibration may choose different counts. Main includes calibration and UART; benchmark score uses only its timed kernel.",
+      "throughput_increase_percent": 65.08140592440321,
+      "wait_percent_main_cycles": {
+        "off": {
+          "frontend_wait": 79.68036026112502,
+          "memory_wait": 21.070613471868796,
+          "load_use_wait": 0.5497267536445801,
+          "multiply_wait": 10.317338374972984
+        },
+        "on": {
+          "frontend_wait": 11.977828648570103,
+          "memory_wait": 34.78539285871473,
+          "load_use_wait": 2.1187920141532435,
+          "multiply_wait": 17.055183724591956
+        }
+      },
+      "events_per_1000_retired": {
+        "off": {
+          "frontend_wait": 4485.118083330056,
+          "memory_wait": 1186.0411925828598,
+          "load_use_wait": 30.943502207840307,
+          "multiply_wait": 580.7514017981061,
+          "ic_access": 1019.0279666684515,
+          "ic_miss": 0.14571061302660557,
+          "branch_misses": 13.804387292561414
+        },
+        "on": {
+          "frontend_wait": 408.7389631765771,
+          "memory_wait": 1187.0386384646026,
+          "load_use_wait": 72.30299217506287,
+          "multiply_wait": 582.0018232777065,
+          "ic_access": 1279.801733935074,
+          "ic_miss": 0.34600106629177146,
+          "branch_misses": 13.828337035428806
+        }
+      }
+    },
+    "validation": {
+      "timing_qualified": true,
+      "baseline_us_per_iteration": 32690.9375,
+      "overlap_us_per_iteration": 19832.757272727275,
+      "kernel_speedup": 1.6483304389024347,
+      "time_reduction_percent": 39.33255272129386,
+      "baseline_main_cpi": 5.632902936489132,
+      "overlap_main_cpi": 3.420028145604782,
+      "image_sha256": "a325fb689195551d31496420f87a17d2d183eeb7e1582a4d51f97ef5f3637ded",
+      "note": "Iterations are normalized because automatic calibration may choose different counts. Main includes calibration and UART; benchmark score uses only its timed kernel.",
+      "throughput_increase_percent": 64.83304389024347,
+      "wait_percent_main_cycles": {
+        "off": {
+          "frontend_wait": 79.68256798650988,
+          "memory_wait": 21.148557449466146,
+          "load_use_wait": 0.5599003002906021,
+          "multiply_wait": 10.302071841291088
+        },
+        "on": {
+          "frontend_wait": 11.975736104503863,
+          "memory_wait": 34.86184690854446,
+          "load_use_wait": 2.164117251468422,
+          "multiply_wait": 17.004242334783566
+        }
+      },
+      "events_per_1000_retired": {
+        "off": {
+          "frontend_wait": 4488.441711982064,
+          "memory_wait": 1191.2777135960696,
+          "load_use_wait": 31.538640456480792,
+          "multiply_wait": 580.3057072673056,
+          "ic_access": 1018.5601318588697,
+          "ic_miss": 0.14558533299620866,
+          "branch_misses": 13.814581483845137
+        },
+        "on": {
+          "frontend_wait": 409.5735454173858,
+          "memory_wait": 1192.284976349871,
+          "load_use_wait": 74.01341910410866,
+          "multiply_wait": 581.5498737964417,
+          "ic_access": 1280.1916095616307,
+          "ic_miss": 0.3456982809024748,
+          "branch_misses": 13.839192979012871
+        }
+      }
+    }
+  },
+  "rtl_sha256": {
+    "board_top.v": "cc6feacfc036288a62762842c59e5cb78b8be8d3c44854bec985dbbac0c12e42",
+    "board_top_vga.v": "10b3103c29d23d1843cd02ca589252ada1781155d4b3d6cd3e3df2b4df601cd8",
+    "booth_multiplier.v": "2e7455a63f0374f482cbe7b0133eada6a0e7dd36e899741aa1353ce4b2e13551",
+    "branch_predictor.v": "590808e7ff97a59a6fed13ac131e372c90938374dc0cb7f3276411dd6bb0ae8d",
+    "clkdiv.v": "9cb22107f9aaef3ea8dd33f73139ce3ce5d7741f98b83176ce2be427cadab29b",
+    "clock_bridge.v": "2a632053d6c4158cab0ef8ae02a937ace991547088fcd68a6d6ccdf8edb63736",
+    "clock_interface.v": "2b1c6bf2613b5c64ca4aaf3d3365005609b0da63b3e2082497f337024df9d211",
+    "dcache.v": "ef873f3b218ab2883946f50c228268f0765902a6027cb1a5d704283a26de202b",
+    "ddr2_test.v": "8de5295557a96b936a2b213bb4716746952d3bd8e8149587ba482eb9d119bf4e",
+    "EX.v": "5b6a291aaf753fcf444823435daa7c1e6ecfabaa8ea5cd6f9ab7b1209388047e",
+    "EXMEM_register.v": "4fd32433e5941b8a6e369dd5be9a4975934fcc6bbfc3172b5f02eebdd5c44631",
+    "forward_unit.v": "a8d1224fef9750e06d024218ecdb058a57da1984bc51126d40347af95008f84c",
+    "hazard_unit.v": "fdffc5427505bf1159a65fe3a75f493643d831d755563c98b7c5541a33741703",
+    "I_D_arbitration.v": "3e696caa50dc76b5074e29fb390eb2b4d6b792f70661992d29fd7c9514a047f2",
+    "icache.v": "a862f26e586e4e90303741f9e81ceceefc68158847145819c06ad94578aff582",
+    "icache_pipeline_top.v": "9689bd0dc23839e17487f80928c0e7c1268844e9ec031e3316b6eaec06834e64",
+    "icache_top.v": "a3f76c7cd3a32ca7e6df265194d85dce809a61cf60b1fc3e2f46fbb07fe975a0",
+    "ID.v": "dda00a7cb8fba33f9ea07d192ea484e67cd5efa76c078fcdb9ad481f1e3699c8",
+    "IDEX_register.v": "4aef84a82d37b7afb3cb061cfb69718e4a92516c456dd735bf72533e38459c69",
+    "IF.v": "d9d55d0a7ee3c0c6cd4ecdac31cb3c361c574b6034936c99d2720faa4337538b",
+    "IFID_register.v": "f40f26d867cca71457c404967dd643e6e28bc9e5d75202b11f43f11859767c06",
+    "ip_test.v": "6ef9ed1410973df6416edac42def71e8481411d1e556eb4badfd2cbbeabfcefe",
+    "L2_cache.v": "e0f207eb0d6c3223ea3a4422978aa107bcae631318987b52f2607a4e4b84d1e3",
+    "MEM.v": "5d61b64eb9a1b1a61f11d14a72fcf31b2807ae7e7a322a29e4049fac92490b95",
+    "MEMWB_register.v": "67abd885c7eb4f97cd06f481fca48a1226ad32b20e34d837cf45bc4147204bbb",
+    "MIG_DDR2_interface.v": "950244333ebeace885566748a2bb641a33a93f6440db0e7691f25fe194210fd1",
+    "performance_monitor.v": "01ad212e634f691743733eb908bb2ba2f0c277abbe5ed1522d05ac3bf8ee44aa",
+    "restoring_divider.v": "9b6e17b63612ad9351a577a5d3ab8f31453b338debba2e603147b90f36321423",
+    "uart_bootloader.v": "96b9dd91795de71116fedac526fcf7807de6c09a75d2178fc0eb8212bc2c4805",
+    "uart_rx.v": "d91ac51118110850d88ebc44847687b75b42e51b0a71eeabeea0291256157001",
+    "uart_tx.v": "d772cbfcb0ea334d7382583cc161c490f17d121990859e7e28d96a3333500e64",
+    "vga_640x480.v": "f3717e1e24fbedb31676fd1622e57e8bb7fd2f1a2874cde13283472840c37926",
+    "vga_initials.v": "6cd39c10b6fa8cbc2845b8cb6e80cd10b529011c1db5862c8cdd5a1f50806228",
+    "vga_initials_top.v": "752167370080693ec2e025cfe45d9d5158a7cfe15d6075ad8e88338e62eb0195",
+    "vga_subsystem.v": "a38e6c40146bf0198656a132e2ee21f28b73cf395b34e6054e1d5b47a0050938",
+    "WB.v": "a38238915401d8a891d43ab6fded64441723d301b8826dfd0bceaa13a84679d7"
+  },
+  "hardware_evidence": "UART features 0 -> 3. User reports flashed design. No bitstream hash captured. Current RTL differs from verified three-slot design only in board_top default FETCH_OVERLAP_EN=1."
+}

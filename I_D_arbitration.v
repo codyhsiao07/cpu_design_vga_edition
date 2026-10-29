@@ -9,7 +9,7 @@
 // ============================================================
 `timescale 1ns/1ps
 
-module l2_cache_top
+module l2_cache_top #(parameter FETCH_OVERLAP_EN=0)
 (
     // ---------- Clock / Reset ----------
     input                  clk,
@@ -62,7 +62,14 @@ module l2_cache_top
     input                  app_rd_data_end,
     input                  app_rd_data_valid,
     input                  app_rdy,
-    input                  app_wdf_rdy
+    input                  app_wdf_rdy,
+    input probe_valid,
+    output probe_ready,
+    input [31:0] probe_addr,
+    output probe_rsp_valid,
+    input probe_rsp_ready,
+    output probe_rsp_hit,
+    output [511:0] probe_rsp_line
 );
     // ---------------- Optional error injection for simulation ----------------
 `ifndef SYNTHESIS
@@ -181,7 +188,7 @@ module l2_cache_top
     end
 
     // ---------------- L2 core instance (positional ports only) ----------------
-    l2_cache_core u_core
+    l2_cache_core #(.FETCH_OVERLAP_EN(FETCH_OVERLAP_EN)) u_core
     (
         clk,
         rst,
@@ -214,7 +221,14 @@ module l2_cache_top
         app_rd_data_end,
         app_rd_data_valid,
         app_rdy,
-        app_wdf_rdy
+        app_wdf_rdy,
+        (FETCH_OVERLAP_EN!=0) && probe_valid,
+        probe_ready,
+        probe_addr,
+        probe_rsp_valid,
+        probe_rsp_ready,
+        probe_rsp_hit,
+        probe_rsp_line
     );
 
 endmodule

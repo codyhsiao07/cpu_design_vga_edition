@@ -1,0 +1,631 @@
+{
+  "date": "2026-10-29",
+  "scope": "short RTL simulation, not an official score or board measurement",
+  "slots": 3,
+  "features": {
+    "baseline": 0,
+    "enabled": 3
+  },
+  "rtl_sha256": {
+    "board_top.v": "aa21766f3c021b7c4cb870512ef723075e47d6646a5851012f0a5592b2bfb9e4",
+    "board_top_vga.v": "10b3103c29d23d1843cd02ca589252ada1781155d4b3d6cd3e3df2b4df601cd8",
+    "booth_multiplier.v": "2e7455a63f0374f482cbe7b0133eada6a0e7dd36e899741aa1353ce4b2e13551",
+    "branch_predictor.v": "590808e7ff97a59a6fed13ac131e372c90938374dc0cb7f3276411dd6bb0ae8d",
+    "clkdiv.v": "9cb22107f9aaef3ea8dd33f73139ce3ce5d7741f98b83176ce2be427cadab29b",
+    "clock_bridge.v": "2a632053d6c4158cab0ef8ae02a937ace991547088fcd68a6d6ccdf8edb63736",
+    "clock_interface.v": "2b1c6bf2613b5c64ca4aaf3d3365005609b0da63b3e2082497f337024df9d211",
+    "dcache.v": "ef873f3b218ab2883946f50c228268f0765902a6027cb1a5d704283a26de202b",
+    "ddr2_test.v": "8de5295557a96b936a2b213bb4716746952d3bd8e8149587ba482eb9d119bf4e",
+    "EX.v": "5b6a291aaf753fcf444823435daa7c1e6ecfabaa8ea5cd6f9ab7b1209388047e",
+    "EXMEM_register.v": "4fd32433e5941b8a6e369dd5be9a4975934fcc6bbfc3172b5f02eebdd5c44631",
+    "forward_unit.v": "a8d1224fef9750e06d024218ecdb058a57da1984bc51126d40347af95008f84c",
+    "hazard_unit.v": "fdffc5427505bf1159a65fe3a75f493643d831d755563c98b7c5541a33741703",
+    "I_D_arbitration.v": "3e696caa50dc76b5074e29fb390eb2b4d6b792f70661992d29fd7c9514a047f2",
+    "icache.v": "a862f26e586e4e90303741f9e81ceceefc68158847145819c06ad94578aff582",
+    "icache_pipeline_top.v": "9689bd0dc23839e17487f80928c0e7c1268844e9ec031e3316b6eaec06834e64",
+    "icache_top.v": "a3f76c7cd3a32ca7e6df265194d85dce809a61cf60b1fc3e2f46fbb07fe975a0",
+    "ID.v": "dda00a7cb8fba33f9ea07d192ea484e67cd5efa76c078fcdb9ad481f1e3699c8",
+    "IDEX_register.v": "4aef84a82d37b7afb3cb061cfb69718e4a92516c456dd735bf72533e38459c69",
+    "IF.v": "d9d55d0a7ee3c0c6cd4ecdac31cb3c361c574b6034936c99d2720faa4337538b",
+    "IFID_register.v": "f40f26d867cca71457c404967dd643e6e28bc9e5d75202b11f43f11859767c06",
+    "ip_test.v": "6ef9ed1410973df6416edac42def71e8481411d1e556eb4badfd2cbbeabfcefe",
+    "L2_cache.v": "e0f207eb0d6c3223ea3a4422978aa107bcae631318987b52f2607a4e4b84d1e3",
+    "MEM.v": "5d61b64eb9a1b1a61f11d14a72fcf31b2807ae7e7a322a29e4049fac92490b95",
+    "MEMWB_register.v": "67abd885c7eb4f97cd06f481fca48a1226ad32b20e34d837cf45bc4147204bbb",
+    "MIG_DDR2_interface.v": "950244333ebeace885566748a2bb641a33a93f6440db0e7691f25fe194210fd1",
+    "performance_monitor.v": "01ad212e634f691743733eb908bb2ba2f0c277abbe5ed1522d05ac3bf8ee44aa",
+    "restoring_divider.v": "9b6e17b63612ad9351a577a5d3ab8f31453b338debba2e603147b90f36321423",
+    "uart_bootloader.v": "96b9dd91795de71116fedac526fcf7807de6c09a75d2178fc0eb8212bc2c4805",
+    "uart_rx.v": "d91ac51118110850d88ebc44847687b75b42e51b0a71eeabeea0291256157001",
+    "uart_tx.v": "d772cbfcb0ea334d7382583cc161c490f17d121990859e7e28d96a3333500e64",
+    "vga_640x480.v": "f3717e1e24fbedb31676fd1622e57e8bb7fd2f1a2874cde13283472840c37926",
+    "vga_initials.v": "6cd39c10b6fa8cbc2845b8cb6e80cd10b529011c1db5862c8cdd5a1f50806228",
+    "vga_initials_top.v": "752167370080693ec2e025cfe45d9d5158a7cfe15d6075ad8e88338e62eb0195",
+    "vga_subsystem.v": "a38e6c40146bf0198656a132e2ee21f28b73cf395b34e6054e1d5b47a0050938",
+    "WB.v": "a38238915401d8a891d43ab6fded64441723d301b8826dfd0bceaa13a84679d7"
+  },
+  "files": {
+    "performance_baseline_s0.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s0.json",
+      "sha256": "5defc79e1e816864a265d9202dfe8fd6faac7b2182c5d631124705d2b81ae9e6"
+    },
+    "performance_baseline_s0.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s0.csv",
+      "sha256": "7e9a0cb7769e122a26de0adcae0325e16c19a8857a01daf5e99be6be1c27649b"
+    },
+    "performance_baseline_s0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s0.uart.txt",
+      "sha256": "97009472d636f1cbc39111f2716fa4902adc8a80b0f0c7f05a29200cb55c4121"
+    },
+    "performance_fetch_overlap_s0.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s0.json",
+      "sha256": "ff7e7b750ae00d00927078628f45df26838efce1b865f05e07fb51faad828afd"
+    },
+    "performance_fetch_overlap_s0.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s0.csv",
+      "sha256": "c8502f8ab7e3fd1e648b974825b73ff7b85285784c32e491377382f814397abe"
+    },
+    "performance_fetch_overlap_s0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s0.uart.txt",
+      "sha256": "59ba241949bad7697dc6e13e4577ccf7a61803325900efd91ff8a2fe98feccf0"
+    },
+    "performance_baseline_s1.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s1.json",
+      "sha256": "3fada37b75bcbb039a5505128419457a1432b7193a31aa2a91cf1970b4e3ec82"
+    },
+    "performance_baseline_s1.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s1.csv",
+      "sha256": "634bb527c329806978e42bb222fbf04581033fb15a98ae6d55a0ae056233aab7"
+    },
+    "performance_baseline_s1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s1.uart.txt",
+      "sha256": "80e153fbb599e73d82a1d3cf371f37b2784bc32f8b412c4cb3279b8d85748b5d"
+    },
+    "performance_fetch_overlap_s1.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s1.json",
+      "sha256": "86a85c3bb204ba1e739b2c0266c300d553ff83565e049156075c1bc59052a146"
+    },
+    "performance_fetch_overlap_s1.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s1.csv",
+      "sha256": "060b29943c752822891de0c4c18d68236905764db8d765f43ce93ac10413f3b9"
+    },
+    "performance_fetch_overlap_s1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s1.uart.txt",
+      "sha256": "e6f1e3b0a60bb50213d39db97d32c6e313690caaf885f124d08dddf62327677b"
+    },
+    "validation_baseline_s0.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s0.json",
+      "sha256": "dac975623bded368caa183e3ec996095cf8a5757e35ba59d084bb2c2ccf34212"
+    },
+    "validation_baseline_s0.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s0.csv",
+      "sha256": "87583b73343aab968ebaada0781dce9e9b080a826ed9fdd5de22bd27bd84a0f1"
+    },
+    "validation_baseline_s0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s0.uart.txt",
+      "sha256": "d91c5a5d136726a83d2e4d6e1665d7ed07a776c8f6431619f57e75a3ec29e7c2"
+    },
+    "validation_fetch_overlap_s0.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s0.json",
+      "sha256": "87b7d4b8c48acb5fa28381b732febcca38d1be533959baab399a885c1342242b"
+    },
+    "validation_fetch_overlap_s0.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s0.csv",
+      "sha256": "f8c13acb6c0a5c20017db33fd987fcfdcc02c442542c9d9fa7619b5e85be4514"
+    },
+    "validation_fetch_overlap_s0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s0.uart.txt",
+      "sha256": "7d53008e484c4ebbe6fe399825d4c767aaf472741f2231efae7425dcda679fc6"
+    },
+    "validation_baseline_s1.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s1.json",
+      "sha256": "f6e84b6f86e651b75bf2c3493ded33d1b07532ac52e9c22154e98916e13961d5"
+    },
+    "validation_baseline_s1.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s1.csv",
+      "sha256": "14ea577b95d892ed8370848328a5219d42e4ac8d5c5e03de15d6aeebc482a8b5"
+    },
+    "validation_baseline_s1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s1.uart.txt",
+      "sha256": "7cf43bc840abe043338ae37a04b792f6d19d0e919e7d8a8950885c1aa5539533"
+    },
+    "validation_fetch_overlap_s1.json": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s1.json",
+      "sha256": "51a73877c8de87b6b653d520bbd764f7361d77c7d957992f7021a946d5ba8e10"
+    },
+    "validation_fetch_overlap_s1.csv": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s1.csv",
+      "sha256": "7d969fde5184a93a24edf3ed16700c2ff8ebb606ce873a09a46d6b831c71e7aa"
+    },
+    "validation_fetch_overlap_s1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s1.uart.txt",
+      "sha256": "a9aee1bd8b667026f572abe774864934489b988ee6ceeded578dbfab1457d229"
+    },
+    "performance_baseline_s0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s0.log",
+      "sha256": "2467346459b2fd40973e9142a8005a6666596e9fd6642dcfa8d87453ec6f5be2"
+    },
+    "performance_fetch_overlap_s0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s0.log",
+      "sha256": "acd99c5abed32b70f6d12790f1fe7705523ce3b87760343f9d301cdb92fea54c"
+    },
+    "performance_baseline_s1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_baseline_s1.log",
+      "sha256": "41d910cc266a9f3c80fff63e46b93ff19f3cb69d52618d494a4c64eb16c3498e"
+    },
+    "performance_fetch_overlap_s1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\performance_fetch_overlap_s1.log",
+      "sha256": "b78d6620b0fe879d12c919a078c36439f46f1c680525b96d7aafb4d1a5f98b5e"
+    },
+    "validation_baseline_s0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s0.log",
+      "sha256": "01161532ff13204b69de2aa5dbead02277f3d60c647a9ecf121ed088d54ec776"
+    },
+    "validation_fetch_overlap_s0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s0.log",
+      "sha256": "8acc04aef77600ed23c2b948a852c249b7e2ecd98e5a79f83cf36b5884354b13"
+    },
+    "validation_baseline_s1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_baseline_s1.log",
+      "sha256": "1136c2403492f642ab4b2f973e468388286ebf48ceaa6c8f61de3a74639d0a25"
+    },
+    "validation_fetch_overlap_s1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\coremark_ab\\validation_fetch_overlap_s1.log",
+      "sha256": "6934e690e6694ea3dddd040e9bfc13b696017d3a65afcbe718138ebf5d9c9644"
+    },
+    "cpu_0_utilization.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_0\\utilization.rpt",
+      "sha256": "d803f1c6963b8e65661225884b09c8a3e9b632e8ac9b5b03eeb515f3eeb5ec4a"
+    },
+    "cpu_0_timing_estimate.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_0\\timing_estimate.rpt",
+      "sha256": "b606c2d103f9807255512b50e2829e52df02de3d84e210d8093dae9602cdb218"
+    },
+    "cpu_0_drc.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_0\\drc.rpt",
+      "sha256": "4db38c406083450c271ddb7790fe9f229b3a677904f841dca5f1ba78bd6e331a"
+    },
+    "cpu_1_utilization.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_1\\utilization.rpt",
+      "sha256": "a10f421eac217a8d733d6ec1f33889bd38452ad2be3ad8c20b69bbcbeb5fd5ea"
+    },
+    "cpu_1_timing_estimate.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_1\\timing_estimate.rpt",
+      "sha256": "86cebe86469fcaf663d6c3b819c05d407227c23fd3cd149c074ac7c3d1f96343"
+    },
+    "cpu_1_drc.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\cpu_1\\drc.rpt",
+      "sha256": "380dd9db533dfb23219825062063f431d18dbdf9fcdbee69b3885aae86cce9d7"
+    },
+    "l2_0_utilization.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_0\\utilization.rpt",
+      "sha256": "d920f5562bdeea10b425114dbf69f5535d44bd6ae46a168148278f02d2f6f221"
+    },
+    "l2_0_timing_estimate.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_0\\timing_estimate.rpt",
+      "sha256": "05c1dc1f34d0c68c1d9afff8958b4460b6a5868c181ab8308465b6533efa1dbd"
+    },
+    "l2_0_drc.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_0\\drc.rpt",
+      "sha256": "174248cb7511012d17b5a15a27c24841088f1ccf8e229e5cd99ed11cf0724191"
+    },
+    "l2_1_utilization.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_1\\utilization.rpt",
+      "sha256": "7fae74874a4c284efc9acdc645581a208a6b66b691978819782d3d95a44ec5b6"
+    },
+    "l2_1_timing_estimate.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_1\\timing_estimate.rpt",
+      "sha256": "d04750243ee0f846a0e556518364241a0fcc2a677488a5ce2d36bf4e6b2e6d0d"
+    },
+    "l2_1_drc.rpt": {
+      "source": "build_perf\\fetch_slots\\synthesis\\l2_1\\drc.rpt",
+      "sha256": "ea778d6694e5363849b3e98eaf0fd0131ab4c1db90e2292febd046af93d28dca"
+    },
+    "cpu_smoke_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed0.json",
+      "sha256": "9b40b335658755c6788319502806b963d32a80b165b0a6454f9d20339390e9b3"
+    },
+    "cpu_smoke_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed0.uart.txt",
+      "sha256": "5842da27fae9a0c1cc4983f66873ebd5adffd17b5a5a84f34f84fcb2c2e915b3"
+    },
+    "cpu_smoke_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed0.log",
+      "sha256": "71a94d2e7d258b267392e8eb5d1868488eb127cfced641a5d831e01e023918be"
+    },
+    "cpu_smoke_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed1.json",
+      "sha256": "757e88fe850a87e4af160e9807a23b36da34a526cf989264eca77e271a9774c9"
+    },
+    "cpu_smoke_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed1.uart.txt",
+      "sha256": "5842da27fae9a0c1cc4983f66873ebd5adffd17b5a5a84f34f84fcb2c2e915b3"
+    },
+    "cpu_smoke_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed1.log",
+      "sha256": "362c9e6d88e07c895667dcf0385441e2ab8e3964e8565f5e9cc8284bf249ad6a"
+    },
+    "cpu_smoke_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed2.json",
+      "sha256": "5241dfbc6a7d0bed1a5afc41a6b09aa271a9c96f0f25b20bba64dd9252fb5a6e"
+    },
+    "cpu_smoke_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed2.uart.txt",
+      "sha256": "5842da27fae9a0c1cc4983f66873ebd5adffd17b5a5a84f34f84fcb2c2e915b3"
+    },
+    "cpu_smoke_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\smoke_seed2.log",
+      "sha256": "0913ac27e25720be4f18495aa07714e774c0d383eaa002e3c4d824e1f73c6634"
+    },
+    "cpu_count_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed0.json",
+      "sha256": "3617f3ecaee2539ca4fe619101652c0883d3144deb2b508a7233c030d9dc118f"
+    },
+    "cpu_count_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed0.uart.txt",
+      "sha256": "601cff1ffae946784562647a773462719764de6f0fbcf77555e06ff33affe90b"
+    },
+    "cpu_count_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed0.log",
+      "sha256": "0b041362773116ae0e04eebca11f49f90411b63b05ee654d50d55f73d10c237c"
+    },
+    "cpu_count_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed1.json",
+      "sha256": "4307404ffe54a557b6c9afbe3994b2d497aee0625c39e930d0246008ef981aa9"
+    },
+    "cpu_count_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed1.uart.txt",
+      "sha256": "59a478b00118bf58452c57277b79bff69c38cc79a80c67d0439d5f6f5c2079e9"
+    },
+    "cpu_count_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed1.log",
+      "sha256": "c4e1b91247f53b6bef1dabdd35ef9a57a3ec838d4c46cdac9fb1ac92c7cf9d39"
+    },
+    "cpu_count_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed2.json",
+      "sha256": "3b72b5373e8e3c349729540d9fde1d674dca5c021add84d7a66b07b7f3271355"
+    },
+    "cpu_count_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed2.uart.txt",
+      "sha256": "601cff1ffae946784562647a773462719764de6f0fbcf77555e06ff33affe90b"
+    },
+    "cpu_count_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\count_seed2.log",
+      "sha256": "4141fa2148726d85387569b6039c00dc2de9abd0936e6bb49376467e61955543"
+    },
+    "cpu_tail_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed0.json",
+      "sha256": "c473f5fc8c111d21860cf08895e9802a9cbb46c767f25c0387a3e07b574514b0"
+    },
+    "cpu_tail_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed0.uart.txt",
+      "sha256": "9a7eeaba25b3f25e29960cef6fb684542983b65984b6b7e019bacf54b829739c"
+    },
+    "cpu_tail_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed0.log",
+      "sha256": "bd4fa444a31763c94c4cf53d280c0e7e0ab8ae2d879e318ad5d6d6040977ab79"
+    },
+    "cpu_tail_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed1.json",
+      "sha256": "8e35e6773de67e4317c8470191dad6ccee699d42862aceee313d1897a421937c"
+    },
+    "cpu_tail_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed1.uart.txt",
+      "sha256": "9a7eeaba25b3f25e29960cef6fb684542983b65984b6b7e019bacf54b829739c"
+    },
+    "cpu_tail_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed1.log",
+      "sha256": "83f735b11833c6bd5f34e39bd45d6ca2b051c0fa71d27eef264bdda54ec53b4f"
+    },
+    "cpu_tail_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed2.json",
+      "sha256": "17d5413f1a1fa4f223c38f03771c34b917a1696f4633b557a4c997a8897da7e1"
+    },
+    "cpu_tail_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed2.uart.txt",
+      "sha256": "9a7eeaba25b3f25e29960cef6fb684542983b65984b6b7e019bacf54b829739c"
+    },
+    "cpu_tail_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\tail_seed2.log",
+      "sha256": "5bd37cf082a3b8b6027307579bdad19de6d5e443bd7a2410f9aaeb364146cf99"
+    },
+    "cpu_alu_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed0.json",
+      "sha256": "fd9b852913ec1b92857305531c0b6a9e48b426773b9521bab435eb5352113160"
+    },
+    "cpu_alu_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed0.uart.txt",
+      "sha256": "b5d34e94426eaec0eac5cd756792b4b369de2f65a1e28fd18d1a74cf3ab1d17e"
+    },
+    "cpu_alu_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed0.log",
+      "sha256": "672e6f22633f29958424cb34c40e5d6f97b50313ada410b7938e30d55016d363"
+    },
+    "cpu_alu_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed1.json",
+      "sha256": "9d98d1f52a689936e4d940d9d6ed09cc10392b2534e19544e6dfb01a22c1b63e"
+    },
+    "cpu_alu_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed1.uart.txt",
+      "sha256": "76d718d853406ccc92b9416a937159b773e7c8c57442bb8192721b0906860f89"
+    },
+    "cpu_alu_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed1.log",
+      "sha256": "8840bc43bba0fa137e51a74c09bf611f1000bb48ba1af88e24b60015d5c446fd"
+    },
+    "cpu_alu_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed2.json",
+      "sha256": "16763f9288743bcd21d530e9b9e8ee201decdbac0ac4804e373b22c37e161ee5"
+    },
+    "cpu_alu_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed2.uart.txt",
+      "sha256": "a02e269e707716b0d4341519832a285dac9bf1cede951418b85386f5203fef02"
+    },
+    "cpu_alu_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\alu_seed2.log",
+      "sha256": "4ae1c3def46f482f6ae9a43296cf2cb2a3959fecfaac66bf964fd81d5ea8aa57"
+    },
+    "cpu_branch_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed0.json",
+      "sha256": "91498342448f39fc1237502e6536f4d3ad56e4e2a1b85f2756f918ba8a08da96"
+    },
+    "cpu_branch_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed0.uart.txt",
+      "sha256": "8286197d9a61b28372e916517f1f4dace451650ecdc280d83acdf33d0d9a750d"
+    },
+    "cpu_branch_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed0.log",
+      "sha256": "9de31d9635158e0a0e7b445de52f99f5f83b4581f4aed40307ab0e2b8486a26d"
+    },
+    "cpu_branch_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed1.json",
+      "sha256": "dd45bb7cc51fb715d7214481998d12f438a5b7e372e28876908650477f120434"
+    },
+    "cpu_branch_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed1.uart.txt",
+      "sha256": "6891b237d2e109845e0a2e1a870c9562e7c90935dd6f21d32d9f74808fc70759"
+    },
+    "cpu_branch_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed1.log",
+      "sha256": "ddcd0c0e94d1667a490c8e71a62cd8d89c65df6135149b0e1c818c3fab28b4a3"
+    },
+    "cpu_branch_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed2.json",
+      "sha256": "37d48d27693467e3a7a80194a5684110b793c116e78800907293cd2273bcab05"
+    },
+    "cpu_branch_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed2.uart.txt",
+      "sha256": "b6a85291f7c6cecb394331ee8695497010c17021e9401f08fd443c3ab2fbbbbd"
+    },
+    "cpu_branch_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\branch_seed2.log",
+      "sha256": "74f754dbbbb72a42d9fafc0f119c72941d450b9cf76a37f617380e9912ce0d57"
+    },
+    "cpu_array_small_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed0.json",
+      "sha256": "baa6467a0d41e697830852d4ed233c4dd7e02349d77ba57996c2c1c95bb220cd"
+    },
+    "cpu_array_small_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed0.uart.txt",
+      "sha256": "aee036139fe279c7bf7587c65f9df9b12dd8873daf0d372600bacbc8bcdd24f7"
+    },
+    "cpu_array_small_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed0.log",
+      "sha256": "c9358ddb4a4ddec3c35b1fe54ea0d7e566fac0ceb2367c925e50f92cf0cfef6b"
+    },
+    "cpu_array_small_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed1.json",
+      "sha256": "189581d41ad0abbcdf95f84ed14162b14ce36b7f98bf8c06b6f1c12f1f1aa468"
+    },
+    "cpu_array_small_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed1.uart.txt",
+      "sha256": "389252e510512991f361a86a248b29569844459bdd42588dfdbc4d540ee5e506"
+    },
+    "cpu_array_small_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed1.log",
+      "sha256": "9be2047b55940eb11f27bde667544211e340cb0cfaa62cfe031adc87460670d2"
+    },
+    "cpu_array_small_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed2.json",
+      "sha256": "6ce83cb5f88c9579027e31102ebdc7bf5d912a499e196ce1426c65f42f0b2322"
+    },
+    "cpu_array_small_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed2.uart.txt",
+      "sha256": "389252e510512991f361a86a248b29569844459bdd42588dfdbc4d540ee5e506"
+    },
+    "cpu_array_small_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_small_seed2.log",
+      "sha256": "4a536a937d526f36e1e0bbd3e5c2c1f76d8d480c44cdd0ba5f2bbe01475d1c97"
+    },
+    "cpu_array_large_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed0.json",
+      "sha256": "5d54eb68d7facc46702191d17580e5c0f585e310b2951e65e027fd26be5da00b"
+    },
+    "cpu_array_large_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed0.uart.txt",
+      "sha256": "f09fbcc7382ad966e17c3c42190deeaa3084ddd4190f3e4a351bfb5b5b12b9bc"
+    },
+    "cpu_array_large_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed0.log",
+      "sha256": "059f4e7d5200e31df17c950fe5a5ba1920ae097523e0d4aa307f9293d23c4007"
+    },
+    "cpu_array_large_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed1.json",
+      "sha256": "00424757b5d726e715b24d33e29b179586005d04c052981cc8edbe10ce9aff96"
+    },
+    "cpu_array_large_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed1.uart.txt",
+      "sha256": "f7a793688edce10d20df87d1cfdbd7906648d6ae102f432cef4e3cb6954aeb04"
+    },
+    "cpu_array_large_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed1.log",
+      "sha256": "44ef7a43b91cca5bac9f85f6ec551045b55ce5e5b2f853c774a4992cfae087b9"
+    },
+    "cpu_array_large_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed2.json",
+      "sha256": "80483ddf219cc63f1bd6912afc7866c2b7281c79f8db797dcec280a5407e3a2e"
+    },
+    "cpu_array_large_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed2.uart.txt",
+      "sha256": "950aa2cd710caa2b1ee763e76bca4d9749c02858d796f00e971c81b78af5d513"
+    },
+    "cpu_array_large_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\array_large_seed2.log",
+      "sha256": "cc9a2609b0f242f7caf500a53a6325231179edb79b5e6d4045e008840583482c"
+    },
+    "cpu_muldiv_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed0.json",
+      "sha256": "a44f1ca480310cbf36f2081e7ccf5491459570f59ec58cbfef832f90f4ca34dd"
+    },
+    "cpu_muldiv_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed0.uart.txt",
+      "sha256": "8f7987069f15de5b30da6f974d650e9ce76e75514d9eaa6c74899dd4941631fa"
+    },
+    "cpu_muldiv_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed0.log",
+      "sha256": "45ad0e62627baff23ee711c6a66cce5bc1d57f757b771838e6afe768afd6a762"
+    },
+    "cpu_muldiv_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed1.json",
+      "sha256": "e20322c0a27ba33ff2ca90c750d6e4e9ba7d94d919dce0c910a70de6767de401"
+    },
+    "cpu_muldiv_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed1.uart.txt",
+      "sha256": "1a09421305df6f53525902f928f88b77a9d65196fd861fce43e64c286bc022ae"
+    },
+    "cpu_muldiv_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed1.log",
+      "sha256": "4439de8ca669f4abcbe4bc21f75e26ad6e4e7dea567ebbe5266dc0a7969b11c1"
+    },
+    "cpu_muldiv_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed2.json",
+      "sha256": "f3d4dd65d63ab96720d64303a88b4fb2238eecfded7051aa3eb8ea5754f1ae80"
+    },
+    "cpu_muldiv_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed2.uart.txt",
+      "sha256": "0d7b692ffc543c23897ac0f6065cfa7061215a9f67a83b645fb978a8e2c4f97f"
+    },
+    "cpu_muldiv_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\muldiv_seed2.log",
+      "sha256": "53364ba80e2f2a327170ff909f588dcd5b0ada5dd650e1527600194a05b8c1a0"
+    },
+    "cpu_stress_seed0.json": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed0.json",
+      "sha256": "77b4de863fb391040d35459bc1e77097b5dcf6b4d4005bf04f60c15e78549646"
+    },
+    "cpu_stress_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed0.uart.txt",
+      "sha256": "75e75b8639904949728b4d1a49d549bc10a5722088f7d3b319c297c29196e483"
+    },
+    "cpu_stress_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed0.log",
+      "sha256": "686697300522a8556792b86f3f92b8de69a83ed9f690ac63f8034a777de1b8fe"
+    },
+    "cpu_stress_seed1.json": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed1.json",
+      "sha256": "58b8258105b0b3a8f812a3e8dfef5eba21dacd5f5c3e8766900df926b493787c"
+    },
+    "cpu_stress_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed1.uart.txt",
+      "sha256": "dd8b9011839d1c62ab644208448c14819e48ccf59e804311b89b8a36d1b26f73"
+    },
+    "cpu_stress_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed1.log",
+      "sha256": "1bc13c19fa01933851f9301c3668f7f50a91e9a8cebdeb9cfc4d2f1bf12b1ceb"
+    },
+    "cpu_stress_seed2.json": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed2.json",
+      "sha256": "6df01a636608ce7cb4489e404a841b86335419060956e4d88afb57a4edef4086"
+    },
+    "cpu_stress_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed2.uart.txt",
+      "sha256": "235c5275fbe5032a84011bcaaa1e6c1a1ec65a865e05c082adc896b9b7d73851"
+    },
+    "cpu_stress_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\full\\stress_seed2.log",
+      "sha256": "19f231b55e938a2ce1832102e26b27565e8a1cdc99fb1ed3ff27d658eb86c6fa"
+    },
+    "cpu_fetch_dependencies_seed0.json": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed0.json",
+      "sha256": "4aae642a69cbf776c69df723ea8dc2d9d6913b49a4a1ac506a27f41e02e8b967"
+    },
+    "cpu_fetch_dependencies_seed0.uart.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed0.uart.txt",
+      "sha256": "edc9e1e23bfa7ca56192e4e94971231ea70f653d313a44f8dd8bcaa94893b0b6"
+    },
+    "cpu_fetch_dependencies_seed0.sim.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed0.log",
+      "sha256": "85febab3f8384a15a2babc2f4fe04b5bab901b7ed2510801c9ef6fbeca0bd9aa"
+    },
+    "cpu_fetch_dependencies_seed1.json": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed1.json",
+      "sha256": "fdd966f817a806dbd58586543226e06d5d5d9b5051b9623789f2f70797909788"
+    },
+    "cpu_fetch_dependencies_seed1.uart.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed1.uart.txt",
+      "sha256": "96c6222f26d2b63000397d2e7e6016df986d3ab7f06a461616ee47452e767119"
+    },
+    "cpu_fetch_dependencies_seed1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed1.log",
+      "sha256": "ab92f9d787db1937f7c49be8f52211530fdeaf31c1a794afdde4bbf18e8ef510"
+    },
+    "cpu_fetch_dependencies_seed2.json": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed2.json",
+      "sha256": "19bd745fb82e27f7c74a5187c66bfd01997221ed1aeb62e36a28dfa1cd666c4b"
+    },
+    "cpu_fetch_dependencies_seed2.uart.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed2.uart.txt",
+      "sha256": "e064149af6046cd2b765638e413b9632bf447fe02b425a469da7547304a99262"
+    },
+    "cpu_fetch_dependencies_seed2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\dependencies\\fetch_dependencies_seed2.log",
+      "sha256": "88f044fd2ae65ab775ab843ad6dcc1556922b4473efa0152f5b619909db782ae"
+    },
+    "directed_s1.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s1.log",
+      "sha256": "74432d5bc962e61d57e57842ad085b95c708f74799f558335c3c69b2fd1ee4ab"
+    },
+    "directed_s2.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s2.log",
+      "sha256": "465de5033a799e9ed07cc428c7c95a5d2ff7a299bc530faf9098215e94557d16"
+    },
+    "directed_s3.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s3.log",
+      "sha256": "240910f2f12780f3f603f1b90b6f5f516c6295af947b753516bc83b5febe065d"
+    },
+    "directed_s4.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s4.log",
+      "sha256": "775b0a3ec54bc124359c9124baf90a0712eb41aceb5cf951afbcb4a4084e14bc"
+    },
+    "directed_s5.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s5.log",
+      "sha256": "ff2ed06a13670e2bcffd0a21a7ac261205301a7090033e64ddf4456cd80d1397"
+    },
+    "directed_s6.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s6.log",
+      "sha256": "1c2c01d08688d7bdfb8d9fecf81d361287de28c56656b51a1e1c98d1ba270f77"
+    },
+    "directed_s7.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s7.log",
+      "sha256": "92a13122e0d704a4b5afb8d1829561a9d92014cb9c019d82ecfa81a763b991d9"
+    },
+    "directed_s8.sim.txt": {
+      "source": "build_perf\\fetch_slots\\regression\\directed_s8.log",
+      "sha256": "8ecbb4abbcaac0d55462ed6f0dead17092b13d19df998655798fd7581dc67ef3"
+    },
+    "coremark_summary.json": {
+      "sha256": "7ceb96d8737823a832bd5c2abc749b16ed6624ea9a6c6ae7cdf17f8519229fda"
+    },
+    "cpu_summary.json": {
+      "sha256": "8dec28210d726f78310c7440a538e92d002faf9de4cea71b1af11f558f4fddea"
+    }
+  },
+  "verification": {
+    "cpu_passed": 30,
+    "coremark_crc_passed": 8,
+    "directed_seeds_passed": 8,
+    "python_tests_passed": 13,
+    "baseline_cache_and_l2_tbs_passed": 2,
+    "ooc_synthesis_passed": 4
+  }
+}

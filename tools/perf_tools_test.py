@@ -36,6 +36,10 @@ class ReportTests(unittest.TestCase):
         opt['benchmark'].update(iterations=2000,ticks_us=20_000_000)
         result=compare(base,opt)
         self.assertAlmostEqual(result['kernel_speedup'],1.2)
+        opt['metadata']['features']=3
+        self.assertAlmostEqual(compare(base,opt)['kernel_speedup'],1.2)
+        opt['metadata']['features']=7
+        with self.assertRaises(ValueError):compare(base,opt)
         opt['metadata']['features']=0
         with self.assertRaises(ValueError):compare(base,opt)
         opt['metadata']['features']=1

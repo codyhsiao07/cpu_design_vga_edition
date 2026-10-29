@@ -14,6 +14,7 @@ CASES = [
     ('smoke', 'OS/main.c', '', 17, 2),
     ('count', 'TEST_FILES/prog_perf_count.S', '', 42, 35),
     ('tail', 'TEST_FILES/prog_perf_tail.S', '', 43, 3),
+    ('fetch_dependencies', 'TEST_FILES/prog_perf_fetch_dependencies.S', '', 0x5f07c0de, None),
     ('alu', 'TEST_FILES/prog_perf_alu.c', '', 0, None),
     ('branch', 'TEST_FILES/prog_perf_branch.c', '', 0, None),
     ('array_small', 'TEST_FILES/prog_perf_array.c', '-DPERF_ARRAY_WORDS=128', 0, None),
@@ -41,7 +42,7 @@ def main():
     ap.add_argument('--cases', default=','.join(row[0] for row in CASES))
     ap.add_argument('--seeds', type=int, default=2, help='random-backpressure runs per case, plus deterministic')
     ap.add_argument('--production', action='store_true', help='use production cache geometry in simulation')
-    ap.add_argument('--fetch-overlap', action='store_true', help='A/B: launch next fetch with current response handshake')
+    ap.add_argument('--fetch-overlap', action='store_true', help='enable three ordered fetch slots and hit-under-miss')
     ap.add_argument('--out-dir', type=Path, default=ROOT / 'build_perf/verification')
     ap.add_argument('--iverilog', default='iverilog')
     ap.add_argument('--vvp', default='vvp')
@@ -101,6 +102,10 @@ def main():
                 instruction_count, branches = check_trace(image, symbols, trace, expected)
                 report = parse_report(uart.read_text(encoding='ascii'))
                 counters, metadata = report['counters'], report['metadata']
+                # --skip-build also validates older report firmware, which had
+                # no optional features field. When present it must match RTL.
+                if 'features' in metadata:
+                    assert metadata['features'] == (3 if args.fetch_overlap else 0), name
                 assert counters['instructions'] == instruction_count, name
                 assert counters['branches'] == branches, name
                 assert metadata['return'] == expected, name

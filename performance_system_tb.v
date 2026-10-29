@@ -15,6 +15,44 @@ module performance_system_tb;
   reg [8*128-1:0] line=0;
   reg [8*256-1:0] trace_path, uart_path;
   integer hold_enable;
+`ifdef PERF_FETCH_OVERLAP
+  // Independent three-slot request/response ordering oracle. This does not use
+  // the cache's own slot metadata to decide which PC should be returned next.
+  integer fetch_head=0, fetch_tail=0, fetch_depth=0;
+  integer fetch_accepted=0, fetch_delivered=0, fetch_cancelled=0, fetch_both=0;
+  integer fetch_hist[0:3];
+  reg [31:0] fetch_expected[0:2];
+  integer fh;
+  initial for(fh=0;fh<4;fh=fh+1) fetch_hist[fh]=0;
+  always @(posedge tb.dut.core_clk) if(tb.dut.core_rst_n) begin
+    if(tb.dut.fetch_outstanding_q!==fetch_depth || tb.dut.if_pending!==(fetch_depth!=0))
+      $fatal(1,"frontend outstanding count mismatch");
+    fetch_hist[fetch_depth]=fetch_hist[fetch_depth]+1;
+    if(tb.dut.fe_redirect_valid) begin
+      fetch_cancelled=fetch_cancelled+fetch_depth;
+      fetch_head=0; fetch_tail=0; fetch_depth=0;
+    end else begin
+      if(tb.dut.fetch_resp_valid && tb.dut.fetch_resp_ready) begin
+        if(fetch_depth==0 || tb.dut.fetch_resp_pc!==fetch_expected[fetch_head])
+          $fatal(1,"frontend out-of-order/unsolicited response");
+        fetch_head=(fetch_head==2)?0:fetch_head+1;
+        fetch_depth=fetch_depth-1; fetch_delivered=fetch_delivered+1;
+      end
+      if(tb.dut.fetch_req_hs) begin
+        if(fetch_depth>=3) $fatal(1,"more than three fetches outstanding");
+        fetch_expected[fetch_tail]=tb.dut.fetch_req_addr;
+        fetch_tail=(fetch_tail==2)?0:fetch_tail+1;
+        fetch_depth=fetch_depth+1; fetch_accepted=fetch_accepted+1;
+        if(tb.dut.fetch_resp_valid && tb.dut.fetch_resp_ready) fetch_both=fetch_both+1;
+      end
+    end
+  end
+  final begin
+    $display("FETCH_SLOTS accepted=%0d delivered=%0d cancelled=%0d pending=%0d simultaneous=%0d occupancy=%0d,%0d,%0d,%0d",
+      fetch_accepted,fetch_delivered,fetch_cancelled,fetch_depth,fetch_both,
+      fetch_hist[0],fetch_hist[1],fetch_hist[2],fetch_hist[3]);
+  end
+`endif
   initial begin
     trace_path="build_perf/retire.trace"; uart_path="build_perf/uart.txt";
     n=$value$plusargs("PERF_TRACE=%s",trace_path);

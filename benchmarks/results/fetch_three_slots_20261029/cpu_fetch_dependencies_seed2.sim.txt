@@ -1,0 +1,8 @@
+[TB CFG] TEST=0 MEMFILE=build_perf/perf_fetch_dependencies.mem EXPECT_RD=x4 EXPECT_VAL=0x00000011 MAXCYCLES=12000000
+[TB CFG] RAND_MEM=1 SEED=2 RAND_I_MAX=9 RAND_D_MAX=9 ASSERT_EN=1 STALL_WDOG=512
+[TB CFG] TRACE_EN=0 TRACE_FILE=build_rv32/commit_trace.log COV_EN=0 COV_FILE=build_rv32/tb_coverage.txt
+[TB CFG] STATE_COV_EN=0 STATE_COV_FILE=build_rv32/state_coverage.txt
+WARNING: C:\cpu_design_for_application\cpu_design-main\icache_pipeline_tb.v:1987: $readmemh(build_perf/perf_fetch_dependencies.mem): Not enough words in the file for the requested range [0:262143].
+PASS: performance_system_tb cycles=200 instructions=31 branches=5 UART decoded and snapshot stable
+C:\cpu_design_for_application\cpu_design-main\performance_system_tb.v:136: $finish called at 3063616000 (1ps)
+FETCH_SLOTS accepted=181856 delivered=91842 cancelled=90012 pending=2 simultaneous=91842 occupancy=30874,30005,30004,215473

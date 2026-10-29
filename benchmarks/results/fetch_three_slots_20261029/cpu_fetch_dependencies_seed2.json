@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "schema": 1,
+    "status": 4,
+    "return": 1594343646,
+    "core_hz": 100000000,
+    "ic_bytes": 8192,
+    "dc_bytes": 8192,
+    "l2_bytes": 16384,
+    "features": 3
+  },
+  "counters": {
+    "cycles": 200,
+    "instructions": 31,
+    "ic_access": 32,
+    "ic_miss": 6,
+    "dc_load": 2,
+    "dc_load_miss": 2,
+    "dc_store": 1,
+    "dc_store_miss": 1,
+    "branches": 5,
+    "branch_misses": 0,
+    "frontend_wait": 66,
+    "memory_wait": 82,
+    "load_use_wait": 1,
+    "multiply_wait": 18,
+    "divide_wait": 0
+  },
+  "metrics": {
+    "seconds": 2e-06,
+    "cpi": 6.451612903225806,
+    "ipc": 0.155,
+    "ic_miss_percent": 18.75,
+    "dc_load_miss_percent": 100.0,
+    "dc_store_miss_percent": 100.0,
+    "branch_miss_percent": 0.0
+  },
+  "program": "fetch_dependencies",
+  "validation": "PASS",
+  "seed": 2,
+  "hardware_variant": "fetch_overlap",
+  "source": "TEST_FILES/prog_perf_fetch_dependencies.S",
+  "app_defines": "",
+  "compiler_flags": "rv32im ilp32 -O2 -mno-relax -msmall-data-limit=0"
+}

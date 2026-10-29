@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "schema": 1,
+    "status": 4,
+    "return": 0,
+    "core_hz": 100000000,
+    "ic_bytes": 8192,
+    "dc_bytes": 8192,
+    "l2_bytes": 16384,
+    "features": 0
+  },
+  "counters": {
+    "cycles": 2172677,
+    "instructions": 397646,
+    "ic_access": 403762,
+    "ic_miss": 238,
+    "dc_load": 59062,
+    "dc_load_miss": 75,
+    "dc_store": 16746,
+    "dc_store_miss": 1222,
+    "branches": 85873,
+    "branch_misses": 5441,
+    "frontend_wait": 1700761,
+    "memory_wait": 443376,
+    "load_use_wait": 9695,
+    "multiply_wait": 171036,
+    "divide_wait": 3795
+  },
+  "metrics": {
+    "seconds": 0.02172677,
+    "cpi": 5.463847241013363,
+    "ipc": 0.18302122220652217,
+    "ic_miss_percent": 0.0589456164770335,
+    "dc_load_miss_percent": 0.12698520199112798,
+    "dc_store_miss_percent": 7.297265018511883,
+    "branch_miss_percent": 6.336100986340293
+  },
+  "benchmark": {
+    "iterations": 1,
+    "ticks_us": 16391,
+    "data_size": 2000,
+    "run_kind": 1,
+    "crc_list": 58305,
+    "crc_matrix": 1863,
+    "crc_state": 36228,
+    "crc_final": 58305,
+    "crc_ok": 1,
+    "time_valid": 0,
+    "name": "CoreMark",
+    "crc_pass": true,
+    "kernel_seconds": 0.016391,
+    "timing_qualified": false,
+    "iterations_per_second": null,
+    "per_mhz": null
+  },
+  "program": "CoreMark validation",
+  "hardware_variant": "baseline",
+  "validation": "CRC PASS (short run)",
+  "seed": 0,
+  "mem_sha256": "fe86833e06ac73fc8e9a869929da5aeb06c2958344c49c230b003fc69a8b453b"
+}

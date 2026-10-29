@@ -42,7 +42,7 @@ def main():
         report=parse_report(Path(str(prefix)+'.uart.txt').read_text(encoding='ascii'))
         cm=report.get('benchmark',{})
         assert report['metadata']['return']==0 and cm.get('crc_pass'),prefix
-        assert report['metadata'].get('features')==int(variant=='fetch_overlap'),prefix
+        assert report['metadata'].get('features')==(3 if variant=='fetch_overlap' else 0),prefix
         assert cm['run_kind']==int(kind=='validation') and cm['iterations']==1,prefix
         assert not cm['timing_qualified'] and cm['iterations_per_second'] is None,prefix
         report.update(program='CoreMark '+kind,hardware_variant=variant,validation='CRC PASS (short run)',

@@ -19,7 +19,7 @@
 `endif
 `endif
 
-module l2_cache_core
+module l2_cache_core #(parameter FETCH_OVERLAP_EN=0)
 (
     input                  clk,
     input                  rst,
@@ -59,7 +59,16 @@ module l2_cache_core
     input                  app_rd_data_end,
     input                  app_rd_data_valid,
     input                  app_rdy,//MIG 現在是否願意接收一筆「命令（READ / WRITE）
-    input                  app_wdf_rdy//MIG 現在是否願意接收一筆「寫入資料（write data beat）」
+    input                  app_wdf_rdy,//MIG write-data ready
+    // Independent, read-only hit probe. A miss never issues a DDR command;
+    // the requester queues that line on the ordinary serialized interface.
+    input probe_valid,
+    output probe_ready,
+    input [31:0] probe_addr,
+    output reg probe_rsp_valid,
+    input probe_rsp_ready,
+    output reg probe_rsp_hit,
+    output reg [511:0] probe_rsp_line
 );
     // -------- Command encoding (unified) --------
     localparam [1:0] CMD_LINE_RD = 2'b00;
@@ -385,6 +394,33 @@ module l2_cache_core
                 end
                 app_wdf_data = wdf;
                 app_wdf_mask = msk;
+            end
+        end
+    end
+
+    // Second synchronous read port. Only sample in states with no array
+    // writes, so metadata and data form a coherent snapshot. Keep the result
+    // stable under backpressure; primary DDR progress is independent.
+    wire [31:0] probe_eff=probe_addr[31]?probe_addr:(probe_addr+DDR_BASE);
+    wire [INDEX_BITS-1:0] probe_index=probe_eff[6 +: INDEX_BITS];
+    wire [TAG_BITS-1:0] probe_tag=probe_eff[31:6+INDEX_BITS];
+    wire probe_safe=(state==S_IDLE || state==S_HIT_RSP || state==S_MISS_EVICT ||
+                     state==S_MISS_REFILL || state==S_MISS_WAITRD || state==S_MISS_RSP);
+    assign probe_ready=(FETCH_OVERLAP_EN!=0) && !rst && init_calib_complete &&
+                       probe_safe && (!probe_rsp_valid || probe_rsp_ready);
+    always @(posedge clk) begin
+        if(rst) begin
+            probe_rsp_valid<=0; probe_rsp_hit<=0; probe_rsp_line<=0;
+        end else begin
+            if(probe_rsp_valid && probe_rsp_ready) probe_rsp_valid<=0;
+            if(probe_valid && probe_ready) begin
+                probe_rsp_valid<=1;
+                probe_rsp_hit<=(probe_eff>=DDR_BASE && probe_eff<=DDR_END) &&
+                    ((val0_mem[probe_index] && tag0_mem[probe_index]==probe_tag) ||
+                     (val1_mem[probe_index] && tag1_mem[probe_index]==probe_tag));
+                if(val0_mem[probe_index] && tag0_mem[probe_index]==probe_tag)
+                    probe_rsp_line<=data0_mem[probe_index];
+                else probe_rsp_line<=data1_mem[probe_index];
             end
         end
     end

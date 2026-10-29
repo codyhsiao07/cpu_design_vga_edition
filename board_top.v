@@ -7,7 +7,7 @@ module board_top #(
   parameter integer L2_DATA_W     = 64,
   parameter integer USE_MIG       = 1,
   parameter integer UART_BOOT_EN  = 1,
-  parameter integer FETCH_OVERLAP_EN = 0,
+  parameter integer FETCH_OVERLAP_EN = 1,
   parameter integer UART_BAUD     = 115_200,
   // In USE_MIG=1 path, UART logic runs on MIG ui_clk.
   // Board bring-up shows the active UART receiver locks at MUL2 when this is

@@ -37,6 +37,7 @@
 
 | 文件 | 用途 |
 | --- | --- |
+| [PROJECT_FINAL_ANALYSIS.md](docs/PROJECT_FINAL_ANALYSIS.md) | 專題收尾：成果分析、三版比較、結論草稿、限制與報告用圖表。 |
 | [PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md) | 專案用途、架構、top module、memory map、限制總覽。 |
 | [REPRODUCE.md](docs/REPRODUCE.md) | 從新環境 clone 後重現 build、verification、Vivado、board run。 |
 | [VERIFICATION.md](docs/VERIFICATION.md) | 完整 RTL simulation / regression 驗證流程。 |
@@ -46,6 +47,10 @@
 | [PERFORMANCE_MONITOR.md](docs/PERFORMANCE_MONITOR.md) | main 效能量測、UART 報告、測試程式、TB 與實板操作。 |
 | [PERFORMANCE_VERIFICATION.md](docs/PERFORMANCE_VERIFICATION.md) | 本次效能監測驗證結果、模擬數據與 synthesis 範圍。 |
 | [STANDARD_BENCHMARKS.md](docs/STANDARD_BENCHMARKS.md) | 官方 CoreMark 移植、標準計時、取指改良與 A/B 比較。 |
+| [FETCH_THREE_SLOTS.md](docs/FETCH_THREE_SLOTS.md) | FETCH_OVERLAP_EN=1：三槽取指、同拍收送、I-cache/L2 hit-under-miss、TB 與燒錄操作。 |
+| [COREMARK_BOARD_BASELINE.md](docs/COREMARK_BOARD_BASELINE.md) | 新乘法器、overlap OFF 的實板 CoreMark 基準與舊版比較。 |
+| [COREMARK_BOARD_FETCH_THREE_SLOTS.md](docs/COREMARK_BOARD_FETCH_THREE_SLOTS.md) | 三槽位 ON 的實板結果：每次迭代時間減少 39.42%、等待分布與 OFF 比較。 |
+| [FRONTEND_PROFILE.md](docs/FRONTEND_PROFILE.md) | CoreMark TB 拆分 frontend_wait、重疊判讀與觀測區間。 |
 | [C_TO_MEM_BUILD_FLOW.md](docs/C_TO_MEM_BUILD_FLOW.md) | 一般 C 程式如何編譯成 `.mem`。 |
 | [CLOCKING_AND_CDC.md](docs/CLOCKING_AND_CDC.md) | Clock domains、CDC、VGA framebuffer single/double buffer 說明。 |
 | [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Toolchain、simulation、Vivado、DDR2、UART、VGA 常見問題排查。 |

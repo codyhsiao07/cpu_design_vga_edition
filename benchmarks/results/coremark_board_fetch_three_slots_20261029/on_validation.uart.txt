@@ -1,0 +1,53 @@
+2K validation run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 21816033
+Total time (secs): 21
+Iterations/Sec   : 52
+Iterations       : 1100
+Compiler version : GCC 15.2.0
+Compiler flags   : -march=rv32im -mabi=ilp32 -O2 -ffreestanding -nostdlib -mno-relax -msmall-data-limit=0; static; ITERATIONS=0; validation
+Memory location  : Static DDR2; I/D/L2 caches; see PMU metadata
+seedcrc          : 0x18f2
+[0]crclist       : 0xe3c1
+[0]crcmatrix     : 0x0747
+[0]crcstate      : 0x8d84
+[0]crcfinal      : 0x30f5
+Correct operation validated. See README.md for run and reporting rules.
+[COREMARK_BEGIN]
+iterations=0000044c
+ticks_us=014ce2e1
+data_size=000007d0
+run_kind=00000001
+crc_list=0000e3c1
+crc_matrix=00000747
+crc_state=00008d84
+crc_final=000030f5
+crc_ok=00000001
+time_valid=00000001
+[COREMARK_END]
+
+[PERF_BEGIN]
+schema=00000001
+features=00000003
+status=00000004
+return=00000000
+core_hz=02faf080
+ic_bytes=00002000
+dc_bytes=00002000
+l2_bytes=00004000
+cycles=0000000047bc0a0e
+instructions=0000000014f98ed5
+ic_access=000000001ada1022
+ic_miss=000000000001db33
+dc_load=0000000003fa58c6
+dc_load_miss=000000000000004c
+dc_store=000000000103df3c
+dc_store_miss=00000000000004c9
+branches=0000000003df449e
+branch_misses=00000000004a4f73
+frontend_wait=0000000008973a98
+memory_wait=0000000019020b13
+load_use_wait=00000000018d6b5a
+multiply_wait=000000000c32aa6e
+divide_wait=00000000000015ea
+[PERF_END]

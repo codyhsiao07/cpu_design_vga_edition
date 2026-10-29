@@ -1,0 +1,7 @@
+PASS A DDR / B L2 / C I$: younger results buffered, head blocked
+PASS same-line merge: three instructions, one line fill
+PASS full queue: response A and request D on the same edge
+PASS warm hit throughput: 32 ordered words, one response per clock
+PASS failed fill: all waiters fault, retry succeeds without poisoned I$ line
+PASS: fetch_slots_tb accepted=513 delivered=183 cancelled=330 simultaneous=138
+tools/tb/fetch_slots_tb.v:197: $finish called at 34810000 (1ps)

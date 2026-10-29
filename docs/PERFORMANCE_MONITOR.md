@@ -160,7 +160,7 @@ RUNNING 期間的設定寫入會回傳錯誤。
 | `0x004` | R | 狀態：0=IDLE、1=ARMED、2=RUNNING、4=DONE、8=ABORTED。 |
 | `0x008` | RW | 起始 call 的 PC。 |
 | `0x00C` | RW | 最外層呼叫的返回位址。 |
-| `0x010` | RW | 寫：1=清零並 ARM、2=清零並回 IDLE；讀：feature flags，bit0=fetch overlap。舊版讀值為 0。 |
+| `0x010` | RW | 寫：1=清零並 ARM、2=清零並回 IDLE；讀：feature flags，bit0=fetch overlap，bit1=三槽位與 L2 hit-under-miss。新版啟用為 3，OFF 為 0。 |
 | `0x014` | R | core_hz，來自 SoC 的 UART_CLK_HZ 參數。 |
 | `0x018/01C/020` | R | I/D/L2 cache bytes。 |
 | `0x024` | R | Schema version=1。 |

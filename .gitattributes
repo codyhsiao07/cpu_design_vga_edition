@@ -5,3 +5,10 @@
 *.txt text eol=lf
 *.md  text eol=lf
 
+# Captured benchmark evidence is byte-exact, including log whitespace.
+benchmarks/results/** -text -whitespace
+
+# Exported report text remains portable across platforms.
+docs/report_assets/*.svg text eol=lf -whitespace
+docs/report_assets/*.json text eol=lf
+

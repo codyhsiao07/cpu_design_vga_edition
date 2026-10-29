@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-29",
+  "source": "FPGA UART, CoreMark performance seed",
+  "core_hz": 50000000,
+  "cache_bytes": {
+    "I": 8192,
+    "D": 8192,
+    "L2": 16384
+  },
+  "measurement_count_per_configuration": 1,
+  "versions": [
+    {
+      "version": "A",
+      "label": "原乘法器＋原取指",
+      "source": "benchmarks/results/coremark_board_20261028/old_multiplier_performance.json",
+      "source_sha256": "98e40bbcfe28437be567b4e91ff50c46fc9944155e6837709b967df5ca4f2a59",
+      "firmware_sha256": "0176c81e3d6cb93542098189eee26e0ecf26f6d8cb624b240c6828358b56c4ff",
+      "iterations": 400,
+      "kernel_us_per_iteration": 35460.565,
+      "iterations_per_second": 28.200340293506322,
+      "iterations_per_second_per_mhz": 0.5640068058701264,
+      "main_cpi": 6.112847012489391,
+      "wait_percent_main_cycles": {
+        "frontend_wait": 81.28908349280853,
+        "memory_wait": 19.402436317640184,
+        "multiply_wait": 17.417596582302178,
+        "load_use_wait": 0.5062044885903038
+      }
+    },
+    {
+      "version": "B",
+      "label": "Radix-4 乘法器＋原取指",
+      "source": "benchmarks/results/coremark_board_20261028/new_multiplier_performance.json",
+      "source_sha256": "9a5a13fada5b1b42371b7d9d1b0b3d45a97e92f9a0c57a29f09d1769158ce0dc",
+      "firmware_sha256": "0176c81e3d6cb93542098189eee26e0ecf26f6d8cb624b240c6828358b56c4ff",
+      "iterations": 400,
+      "kernel_us_per_iteration": 32641.7625,
+      "iterations_per_second": 30.635600635841893,
+      "iterations_per_second_per_mhz": 0.6127120127168378,
+      "main_cpi": 5.628887807022485,
+      "wait_percent_main_cycles": {
+        "frontend_wait": 79.68036026112502,
+        "memory_wait": 21.070613471868796,
+        "multiply_wait": 10.317338374972984,
+        "load_use_wait": 0.5497267536445801
+      }
+    },
+    {
+      "version": "C",
+      "label": "Radix-4 乘法器＋三槽取指",
+      "source": "benchmarks/results/coremark_board_fetch_three_slots_20261029/on_performance.json",
+      "source_sha256": "a15f1e82899df5f81d80ed9b8ee89b0bb9efe0b3bc46a34151df10d926ce1221",
+      "firmware_sha256": "0176c81e3d6cb93542098189eee26e0ecf26f6d8cb624b240c6828358b56c4ff",
+      "iterations": 1100,
+      "kernel_us_per_iteration": 19773.13090909091,
+      "iterations_per_second": 50.573680243033195,
+      "iterations_per_second_per_mhz": 1.0114736048606638,
+      "main_cpi": 3.4124629360545393,
+      "wait_percent_main_cycles": {
+        "frontend_wait": 11.977828648570103,
+        "memory_wait": 34.78539285871473,
+        "multiply_wait": 17.055183724591956,
+        "load_use_wait": 2.1187920141532435
+      }
+    }
+  ],
+  "comparisons": {
+    "A_to_B": {
+      "speedup": 1.0863557076613128,
+      "throughput_increase_percent": 8.635570766131284,
+      "time_reduction_percent": 7.949118972018643
+    },
+    "B_to_C": {
+      "speedup": 1.6508140592440317,
+      "throughput_increase_percent": 65.08140592440317,
+      "time_reduction_percent": 39.423825814886946
+    },
+    "A_to_C": {
+      "speedup": 1.7933712755472944,
+      "throughput_increase_percent": 79.33712755472943,
+      "time_reduction_percent": 44.23909796955883
+    }
+  },
+  "notes": [
+    "Kernel time divided by timed iterations; main counters include calibration/output.",
+    "Wait counters overlap. Their percentages must not be stacked or summed.",
+    "Single run per configuration; no run-to-run uncertainty estimate."
+  ]
+}

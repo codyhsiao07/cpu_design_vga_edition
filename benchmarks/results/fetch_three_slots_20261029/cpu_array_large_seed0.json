@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "schema": 1,
+    "status": 4,
+    "return": 0,
+    "core_hz": 100000000,
+    "ic_bytes": 8192,
+    "dc_bytes": 8192,
+    "l2_bytes": 16384
+  },
+  "counters": {
+    "cycles": 440468,
+    "instructions": 147470,
+    "ic_access": 196623,
+    "ic_miss": 6,
+    "dc_load": 16384,
+    "dc_load_miss": 1026,
+    "dc_store": 8192,
+    "dc_store_miss": 8192,
+    "branches": 24576,
+    "branch_misses": 6,
+    "frontend_wait": 73794,
+    "memory_wait": 194620,
+    "load_use_wait": 0,
+    "multiply_wait": 0,
+    "divide_wait": 0
+  },
+  "metrics": {
+    "seconds": 0.00440468,
+    "cpi": 2.986831219909134,
+    "ipc": 0.33480298228248134,
+    "ic_miss_percent": 0.0030515249996185593,
+    "dc_load_miss_percent": 6.26220703125,
+    "dc_store_miss_percent": 100.0,
+    "branch_miss_percent": 0.0244140625
+  },
+  "program": "array_large",
+  "validation": "PASS",
+  "seed": 0,
+  "hardware_variant": "fetch_overlap",
+  "source": "TEST_FILES/prog_perf_array.c",
+  "app_defines": "-DPERF_ARRAY_WORDS=8192",
+  "compiler_flags": "rv32im ilp32 -O2 -mno-relax -msmall-data-limit=0"
+}

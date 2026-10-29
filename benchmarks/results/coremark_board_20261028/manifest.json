@@ -1,0 +1,88 @@
+{
+  "recorded_date_local": "2026-10-28",
+  "timezone": "Asia/Taipei",
+  "current_fetch_baseline": "new_multiplier; FETCH_OVERLAP_EN=0",
+  "hardware_variant_evidence": "Multiplier versions supplied by user; fetch overlap, frequency and cache capacities reported by PMU. Bitstream hashes were not supplied.",
+  "no_rtl_changes_in_this_recording": true,
+  "records": {
+    "old_multiplier_performance.json": {
+      "sha256": "98e40bbcfe28437be567b4e91ff50c46fc9944155e6837709b967df5ca4f2a59",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T122509521864Z.json"
+    },
+    "old_multiplier_performance.uart.txt": {
+      "sha256": "988765c72dfb550a73d0f1b4ea03a61e1916e720cb00cfcc886bbce05a1844e8",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T122509521864Z.uart.txt"
+    },
+    "old_multiplier_performance.csv": {
+      "sha256": "ffeb35835dabb8cc1d1baa629544ee1176b557f33df1ca38bb02654c19d2935c",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T122509521864Z.csv"
+    },
+    "new_multiplier_performance.json": {
+      "sha256": "9a5a13fada5b1b42371b7d9d1b0b3d45a97e92f9a0c57a29f09d1769158ce0dc",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T150658383213Z.json"
+    },
+    "new_multiplier_performance.uart.txt": {
+      "sha256": "999f055b934a3c8e42c22a8535a449709a6753197bfe3fb4f010e116fb307c91",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T150658383213Z.uart.txt"
+    },
+    "new_multiplier_performance.csv": {
+      "sha256": "789af42106c3c05faca33b771616c2e169ddc112663577b96db56956126d021e",
+      "source": "build_perf/coremark_board/baseline_performance/coremark_performance_auto_20261028T150658383213Z.csv"
+    },
+    "old_multiplier_validation.json": {
+      "sha256": "b167fb61e04da3b3974852e2fc71222b7d31752c2982ad818a6d6caed4ba007d",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T122556953406Z.json"
+    },
+    "old_multiplier_validation.uart.txt": {
+      "sha256": "db90e8d91854d9d5423e201b6ef2be98709f7bfabc45e49e26fa1a9d2fb434c7",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T122556953406Z.uart.txt"
+    },
+    "old_multiplier_validation.csv": {
+      "sha256": "23e3d05a5c7db433a5a143c50600989458b9d517943b1a46475a16fe0b9341a1",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T122556953406Z.csv"
+    },
+    "new_multiplier_validation.json": {
+      "sha256": "bbc2b7d519662b22ead333ffac870a9c5c0fceb28baeda322c2edee8dd6bc073",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T150756455476Z.json"
+    },
+    "new_multiplier_validation.uart.txt": {
+      "sha256": "00a29daed6fbd59a2e5a2afea46869c49ba6ad866b3969dee8d84a3ef2420c35",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T150756455476Z.uart.txt"
+    },
+    "new_multiplier_validation.csv": {
+      "sha256": "1c570454192fee0dd2c8628843ab6fb48a9734b2093ade1c2c42f47d9fc00ec7",
+      "source": "build_perf/coremark_board/baseline_validation/coremark_validation_auto_20261028T150756455476Z.csv"
+    }
+  },
+  "comparisons": {
+    "performance": {
+      "firmware_sha256": "0176c81e3d6cb93542098189eee26e0ecf26f6d8cb624b240c6828358b56c4ff",
+      "old_kernel_seconds": 14.184226,
+      "new_kernel_seconds": 13.056705,
+      "kernel_time_reduction_percent": 7.949118972018643,
+      "kernel_throughput_increase_percent": 8.635570766131284,
+      "old_main_cycles": 907924387,
+      "new_main_cycles": 836043356,
+      "main_cycles_reduction_percent": 7.917072393826996,
+      "main_cycle_delta": -71881031,
+      "multiply_wait_delta": -71881185,
+      "multiply_wait_reduction_percent": 45.45454545454546,
+      "new_frontend_percent_of_main_cycles": 79.68036026112502
+    },
+    "validation": {
+      "firmware_sha256": "a325fb689195551d31496420f87a17d2d183eeb7e1582a4d51f97ef5f3637ded",
+      "old_kernel_seconds": 14.203896,
+      "new_kernel_seconds": 13.076375,
+      "kernel_time_reduction_percent": 7.9381107831259845,
+      "kernel_throughput_increase_percent": 8.622580799342327,
+      "old_main_cycles": 909163387,
+      "new_main_cycles": 837282280,
+      "main_cycles_reduction_percent": 7.906291435380908,
+      "main_cycle_delta": -71881107,
+      "multiply_wait_delta": -71881185,
+      "multiply_wait_reduction_percent": 45.45454545454546,
+      "new_frontend_percent_of_main_cycles": 79.68256798650988
+    }
+  },
+  "measurement_note": "Whole main includes auto calibration and benchmark output; CoreMark throughput uses its separate timed kernel. Single captured run per mode/version."
+}

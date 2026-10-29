@@ -6,7 +6,7 @@ set sources [list icache_pipeline_top.v performance_monitor.v icache_top.v icach
   L2_cache.v I_D_arbitration.v branch_predictor.v uart_rx.v uart_tx.v uart_bootloader.v]
 if {[catch {
 foreach variant {0 1} {
-  set out_dir "build_perf/fetch_synthesis/variant_$variant"
+  set out_dir "build_perf/fetch_slots/synthesis/cpu_$variant"
   file mkdir $out_dir
   create_project -in_memory -part xc7a100tcsg324-1
   set_property verilog_define {SYNTHESIS FAST_SYNTH} [current_fileset]
@@ -17,8 +17,27 @@ foreach variant {0 1} {
   opt_design
   report_utilization -file "$out_dir/utilization.rpt"
   report_drc -file "$out_dir/drc.rpt"
+  report_timing_summary -file "$out_dir/timing_estimate.rpt"
   write_checkpoint -force "$out_dir/core_no_mig.dcp"
   puts "PASS: standalone CPU/L1 synthesis FETCH_OVERLAP_EN=$variant"
+  close_project
+}
+# The enabled design also adds an L2 read port. Check actual RAM inference and
+# synthesis legality here; the CPU USE_MIG=0 run above cannot exercise that port.
+foreach variant {0 1} {
+  set out_dir "build_perf/fetch_slots/synthesis/l2_$variant"
+  file mkdir $out_dir
+  create_project -in_memory -part xc7a100tcsg324-1
+  set_property verilog_define {SYNTHESIS FAST_SYNTH} [current_fileset]
+  read_verilog [list L2_cache.v I_D_arbitration.v]
+  synth_design -top l2_cache_top -mode out_of_context -part xc7a100tcsg324-1 \
+    -generic "FETCH_OVERLAP_EN=$variant"
+  create_clock -name core_clk -period 20.000 [get_ports clk]
+  opt_design
+  report_utilization -file "$out_dir/utilization.rpt"
+  report_drc -file "$out_dir/drc.rpt"
+  report_timing_summary -file "$out_dir/timing_estimate.rpt"
+  puts "PASS: L2 synthesis FETCH_OVERLAP_EN=$variant"
   close_project
 }
 } message]} { puts stderr "FETCH SYNTHESIS FAILED: $message"; exit 1 }

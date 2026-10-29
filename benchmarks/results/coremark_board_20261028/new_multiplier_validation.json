@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "schema": 1,
+    "status": 4,
+    "return": 0,
+    "core_hz": 50000000,
+    "ic_bytes": 8192,
+    "dc_bytes": 8192,
+    "l2_bytes": 16384,
+    "features": 0
+  },
+  "counters": {
+    "cycles": 837282280,
+    "instructions": 148641347,
+    "ic_access": 151400150,
+    "ic_miss": 21640,
+    "dc_load": 28131871,
+    "dc_load_miss": 76,
+    "dc_store": 7180023,
+    "dc_store_miss": 1225,
+    "branches": 27485856,
+    "branch_misses": 2053418,
+    "frontend_wait": 667168022,
+    "memory_wait": 177073124,
+    "load_use_wait": 4687946,
+    "multiply_wait": 86257422,
+    "divide_wait": 5313
+  },
+  "metrics": {
+    "seconds": 16.7456456,
+    "cpi": 5.632902936489132,
+    "ipc": 0.17752835638657014,
+    "ic_miss_percent": 0.014293248718709989,
+    "dc_load_miss_percent": 0.0002701562224567289,
+    "dc_store_miss_percent": 0.017061226684092795,
+    "branch_miss_percent": 7.470816990382254
+  },
+  "benchmark": {
+    "iterations": 400,
+    "ticks_us": 13076375,
+    "data_size": 2000,
+    "run_kind": 1,
+    "crc_list": 58305,
+    "crc_matrix": 1863,
+    "crc_state": 36228,
+    "crc_final": 59769,
+    "crc_ok": 1,
+    "time_valid": 1,
+    "name": "CoreMark",
+    "crc_pass": true,
+    "kernel_seconds": 13.076375,
+    "timing_qualified": true,
+    "iterations_per_second": 30.589517354771484,
+    "per_mhz": 0.6117903470954297
+  },
+  "program": "coremark_validation_auto",
+  "validation": "PASS",
+  "captured_at_utc": "2026-10-28T15:08:18.533481+00:00",
+  "mem_sha256": "a325fb689195551d31496420f87a17d2d183eeb7e1582a4d51f97ef5f3637ded",
+  "build": {
+    "mem_sha256": "a325fb689195551d31496420f87a17d2d183eeb7e1582a4d51f97ef5f3637ded",
+    "source": "benchmarks/coremark/upstream/core_main.c",
+    "extra_sources": "benchmarks/coremark/upstream/core_list_join.c benchmarks/coremark/upstream/core_matrix.c benchmarks/coremark/upstream/core_state.c benchmarks/coremark/upstream/core_util.c benchmarks/coremark/port/core_portme.c benchmarks/coremark/port/ee_printf.c tools/perf_report.c",
+    "cflags": "-march=rv32im -mabi=ilp32 -ffreestanding -nostdlib -O2 -Wall -Wextra -Ibenchmarks/coremark/port -Ibenchmarks/coremark/upstream -Ibuild_perf/coremark_validation_auto -mno-relax -msmall-data-limit=0",
+    "startup": "tools/perf_crt0.S",
+    "compiler_version": "riscv64-unknown-elf-gcc (xPack GNU RISC-V Embedded GCC x86_64) 15.2.0",
+    "ldlibs": "-lgcc",
+    "benchmark": {
+      "name": "CoreMark",
+      "upstream_commit": "1f483d5b8316753a742cbf5590caf5bd0a4e4777",
+      "iterations": 0,
+      "run_kind": "validation",
+      "data_bytes": 2000,
+      "timer": "microseconds from live PMU high-low-high read",
+      "note": "Short runs validate CRC only; reportable timing requires >=10 seconds and both required seed runs."
+    }
+  }
+}

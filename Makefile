@@ -94,7 +94,8 @@ help:
 	@echo "  make test30-control-side-effects : build TEST_FILES/mem_test30_control_side_effects.mem"
 	@echo "  make test31-system-stress : build bounded simulation stress image"
 	@echo "  make board-stress  : build continuous UART-reporting board stress image"
-	@echo "  make perf-suite    : build nine main-profiling firmware images"
+	@echo "  make perf-suite    : build ten main-profiling firmware images"
+	@echo "  make fetch-slots-tb : three-slot fetch, ordered return and cache/L2 directed tests"
 	@echo "  make perf-tb       : verify PMU, RV32IM retirement traces, and UART reports"
 	@echo "  make coremark      : build official CoreMark auto-calibrated board images"
 	@echo "  make coremark-tb   : short CRC/timing A/B simulation (not an official score)"
@@ -267,6 +268,15 @@ coremark-short:
 coremark-tb:
 	$(PYTHON) -m unittest discover -s tools -p perf_tools_test.py -v
 	$(PYTHON) tools/run_coremark_verification.py
+
+.PHONY: frontend-profile-tb
+.PHONY: fetch-slots-tb
+fetch-slots-tb:
+	$(PYTHON) tools/run_fetch_slots_verification.py
+
+frontend-profile-tb:
+	$(PYTHON) -m unittest discover -s tools -p frontend_profile_test.py -v
+	$(PYTHON) tools/run_frontend_profile.py
 
 clean:
 	$(PYTHON) -c "import shutil; shutil.rmtree(r'$(BUILD_DIR)', ignore_errors=True)"

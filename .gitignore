@@ -11,6 +11,12 @@ release_assets/
 *.map
 *.dis
 
+# Vivado-generated local sessions and simulation databases.
+.Xil/
+*.jou
+*.wdb
+*.str
+
 # Python cache
 __pycache__/
 *.pyc

@@ -626,6 +626,236 @@ module i_cache
 
 endmodule
 
+// Three ordered fetch slots, independent lookup and line-fill work records.
+// The legacy i_cache above remains the FETCH_OVERLAP_EN=0 implementation.
+// Exactly one burst uses the ordinary L2 port. A separate read-only L2 hit
+// probe permits hit-under-miss; probe misses queue for the ordinary port.
+module i_cache_overlap #(
+    parameter ADDR_WIDTH=32, CACHE_BYTES=8192, INDEX_BITS=6,
+    parameter TAG_BITS=ADDR_WIDTH-6-INDEX_BITS,
+    parameter UNC_BASE=32'h0, UNC_MASK=32'h0
+) (
+    input clk, rst_n,
+    output perf_lookup_o, perf_miss_o,
+    input if_req_valid, input [ADDR_WIDTH-1:0] if_req_addr,
+    output if_req_ready, input if_req_kill,
+    output if_resp_valid, input if_resp_ready,
+    output [31:0] if_resp_inst, output [ADDR_WIDTH-1:0] if_resp_pc,
+    output if_resp_err,
+    output l2_req_valid, input l2_req_ready,
+    output [ADDR_WIDTH-1:0] l2_req_addr,
+    output [1:0] l2_req_cmd, output [2:0] l2_req_size, output [7:0] l2_req_len,
+    input l2_rsp_valid, output l2_rsp_ready, input [63:0] l2_rsp_data,
+    input l2_rsp_last, l2_rsp_err,
+    output probe_valid, input probe_ready, output [31:0] probe_addr,
+    input probe_rsp_valid, output probe_rsp_ready, input probe_rsp_hit,
+    input [511:0] probe_rsp_line
+);
+    localparam SETS=CACHE_BYTES/128;
+    localparam Q_NEW=0, Q_LOOKUP=1, Q_WAIT=2, Q_DONE=3;
+    localparam M_FREE=0, M_PROBE=1, M_PROBING=2, M_LOWER=3,
+               M_REQUEST=4, M_RECEIVE=5, M_FINISH=6;
+    (* ram_style="block" *) reg [511:0] data0[0:SETS-1], data1[0:SETS-1];
+    reg [TAG_BITS-1:0] tag0[0:SETS-1], tag1[0:SETS-1];
+    reg v0[0:SETS-1], v1[0:SETS-1], lru[0:SETS-1];
+
+    reg [2:0] q_valid;
+    reg [1:0] q_state[0:2], q_miss[0:2];
+    reg [31:0] q_pc[0:2], q_inst[0:2];
+    reg [2:0] q_err;
+    reg [1:0] head, tail, count;
+    reg [2:0] m_state[0:2];
+    reg [31:0] m_addr[0:2];
+    reg [511:0] m_data[0:2];
+    reg [2:0] m_err, m_uncached;
+    reg [3:0] beat;
+    reg main_busy, probe_busy;
+    reg [1:0] main_id, probe_id, main_rr, probe_rr, finish_rr;
+    reg lookup_valid;
+    reg [1:0] lookup_slot;
+    reg [31:0] lookup_pc;
+    reg [TAG_BITS-1:0] lookup_tag0, lookup_tag1;
+    reg lookup_v0, lookup_v1;
+    reg [511:0] lookup_data0, lookup_data1;
+
+    function [1:0] next_slot;
+        input [1:0] n;
+        begin next_slot=(n==2)?0:n+1'b1; end
+    endfunction
+    function [31:0] word_at;
+        input [511:0] line;
+        input [31:0] pc;
+        begin word_at=line[{pc[5:2],5'b0} +: 32]; end
+    endfunction
+    wire lookup_uncached=(UNC_MASK!=0) && ((lookup_pc & UNC_MASK)==(UNC_BASE & UNC_MASK));
+    wire [INDEX_BITS-1:0] lookup_index=lookup_pc[6 +: INDEX_BITS];
+    wire [TAG_BITS-1:0] lookup_tag=lookup_pc[ADDR_WIDTH-1:6+INDEX_BITS];
+    wire hit0=lookup_v0 && lookup_tag0==lookup_tag;
+    wire hit1=lookup_v1 && lookup_tag1==lookup_tag;
+    wire hit=hit0 || hit1;
+    wire pop=if_resp_valid && if_resp_ready;
+    assign if_resp_valid=q_valid[head] && q_state[head]==Q_DONE && !if_req_kill;
+    assign if_resp_pc=q_pc[head];
+    assign if_resp_inst=q_inst[head];
+    assign if_resp_err=q_err[head];
+    // Recycle the head slot on the very edge that delivers its response.
+    assign if_req_ready=rst_n && !if_req_kill && (count<3 || pop);
+    wire push=if_req_valid && if_req_ready;
+
+    integer scan, ix;
+    integer match_id, free_id, lookup_next, main_next, probe_next, finish_next;
+    always @* begin
+        match_id=-1; free_id=-1; lookup_next=-1;
+        main_next=-1; probe_next=-1; finish_next=-1;
+        for (scan=0; scan<3; scan=scan+1) begin
+            if (m_state[scan]==M_FREE && free_id<0) free_id=scan;
+            if (m_state[scan]!=M_FREE && !lookup_uncached && !m_uncached[scan] &&
+                m_addr[scan][31:6]==lookup_pc[31:6]) match_id=scan;
+            ix=head+scan; if(ix>=3) ix=ix-3;
+            if(q_valid[ix] && q_state[ix]==Q_NEW && lookup_next<0) lookup_next=ix;
+            ix=main_rr+scan; if(ix>=3) ix=ix-3;
+            if(m_state[ix]==M_LOWER && main_next<0) main_next=ix;
+            ix=probe_rr+scan; if(ix>=3) ix=ix-3;
+            if(m_state[ix]==M_PROBE && probe_next<0) probe_next=ix;
+            ix=finish_rr+scan; if(ix>=3) ix=ix-3;
+            if(m_state[ix]==M_FINISH && finish_next<0) finish_next=ix;
+        end
+    end
+    wire lookup_can_finish=hit && !lookup_uncached || match_id>=0 || free_id>=0;
+    wire lookup_fire=lookup_valid && lookup_can_finish && !if_req_kill;
+    assign perf_lookup_o=lookup_fire && !lookup_uncached;
+    assign perf_miss_o=perf_lookup_o && !hit;
+
+    assign l2_req_valid=main_busy && m_state[main_id]==M_REQUEST;
+    assign l2_req_addr=m_addr[main_id];
+    assign l2_req_cmd=m_uncached[main_id]?2'b01:2'b00;
+    assign l2_req_size=m_uncached[main_id]?3'd2:3'd3;
+    assign l2_req_len=m_uncached[main_id]?8'd0:8'd7;
+    assign l2_rsp_ready=main_busy && m_state[main_id]==M_RECEIVE;
+    assign probe_valid=probe_busy && m_state[probe_id]==M_PROBE;
+    assign probe_addr=m_addr[probe_id];
+    assign probe_rsp_ready=probe_busy && m_state[probe_id]==M_PROBING;
+
+    integer n, f;
+    reg victim;
+    reg [INDEX_BITS-1:0] fi;
+    always @(posedge clk) begin
+        if(!rst_n) begin
+            q_valid<=0; q_err<=0; head<=0; tail<=0; count<=0;
+            lookup_valid<=0; main_busy<=0; probe_busy<=0;
+            main_id<=0; probe_id<=0; main_rr<=0; probe_rr<=0; finish_rr<=0;
+            m_err<=0; m_uncached<=0; beat<=0;
+            for(n=0;n<3;n=n+1) begin
+                q_state[n]<=Q_NEW; q_miss[n]<=0; q_pc[n]<=0; q_inst[n]<=0;
+                m_state[n]<=M_FREE; m_addr[n]<=0; m_data[n]<=0;
+            end
+            for(n=0;n<SETS;n=n+1) begin v0[n]<=0; v1[n]<=0; lru[n]<=0; end
+        end else begin
+            if(pop) begin q_valid[head]<=0; head<=next_slot(head); end
+            case({push,pop})
+                2'b10: count<=count+1'b1;
+                2'b01: count<=count-1'b1;
+                default: begin end
+            endcase
+
+            // Round-robin scheduling is independent of CPU head-of-line stalls.
+            if(!main_busy && main_next>=0) begin
+                main_busy<=1; main_id<=main_next; m_state[main_next]<=M_REQUEST;
+                main_rr<=next_slot(main_next);
+            end
+            if(!probe_busy && probe_next>=0) begin
+                probe_busy<=1; probe_id<=probe_next; probe_rr<=next_slot(probe_next);
+            end
+            if(probe_valid && probe_ready) m_state[probe_id]<=M_PROBING;
+            if(probe_rsp_valid && probe_rsp_ready) begin
+                probe_busy<=0;
+                if(probe_rsp_hit) begin
+                    m_data[probe_id]<=probe_rsp_line; m_state[probe_id]<=M_FINISH;
+                end else m_state[probe_id]<=M_LOWER;
+            end
+            if(l2_req_valid && l2_req_ready) begin
+                m_state[main_id]<=M_RECEIVE; beat<=0; m_data[main_id]<=0; m_err[main_id]<=0;
+            end
+            if(l2_rsp_valid && l2_rsp_ready) begin
+                m_data[main_id][{beat[2:0],6'b0} +:64]<=l2_rsp_data;
+                if(l2_rsp_err) m_err[main_id]<=1;
+                if(l2_rsp_last) begin
+                    if(!m_uncached[main_id] && beat!=7) m_err[main_id]<=1;
+                    m_state[main_id]<=M_FINISH; main_busy<=0;
+                end else if(beat==7) begin
+                    // Overlong bursts are drained without wrapping the buffer.
+                    m_err[main_id]<=1;
+                end else beat<=beat+1'b1;
+            end
+
+            // One array write per cycle. Choose victim at INSTALL time, so
+            // concurrent same-set fills never reserve/overwrite one another.
+            if(finish_next>=0) begin
+                f=finish_next; fi=m_addr[f][6 +: INDEX_BITS];
+                victim=!v0[fi]?0:!v1[fi]?1:lru[fi];
+                if(!m_err[f] && !m_uncached[f]) begin
+                    if(!victim) begin
+                        data0[fi]<=m_data[f]; tag0[fi]<=m_addr[f][ADDR_WIDTH-1:6+INDEX_BITS]; v0[fi]<=1; lru[fi]<=1;
+                    end else begin
+                        data1[fi]<=m_data[f]; tag1[fi]<=m_addr[f][ADDR_WIDTH-1:6+INDEX_BITS]; v1[fi]<=1; lru[fi]<=0;
+                    end
+                end
+                for(n=0;n<3;n=n+1) if(q_valid[n] && q_state[n]==Q_WAIT && q_miss[n]==f) begin
+                    q_inst[n]<=m_err[f]?32'h13:(m_uncached[f]?
+                        (q_pc[n][2]?m_data[f][63:32]:m_data[f][31:0]):word_at(m_data[f],q_pc[n]));
+                    q_err[n]<=m_err[f]; q_state[n]<=Q_DONE;
+                end
+                m_state[f]<=M_FREE; finish_rr<=next_slot(f);
+            end
+
+            if(lookup_fire) begin
+                lookup_valid<=0;
+                if(hit && !lookup_uncached) begin
+                    q_inst[lookup_slot]<=word_at(hit0?lookup_data0:lookup_data1,lookup_pc);
+                    q_state[lookup_slot]<=Q_DONE; q_err[lookup_slot]<=0;
+                    if(finish_next<0) lru[lookup_index]<=hit0;
+                end else if(match_id>=0) begin
+                    if(m_state[match_id]==M_FINISH) begin
+                        // A fill may complete on the same edge as a late join.
+                        q_inst[lookup_slot]<=m_err[match_id]?32'h13:word_at(m_data[match_id],lookup_pc);
+                        q_err[lookup_slot]<=m_err[match_id]; q_state[lookup_slot]<=Q_DONE;
+                    end else begin
+                        q_miss[lookup_slot]<=match_id; q_state[lookup_slot]<=Q_WAIT;
+                    end
+                end else begin
+                    m_addr[free_id]<=lookup_uncached?lookup_pc:{lookup_pc[31:6],6'd0};
+                    m_state[free_id]<=lookup_uncached?M_LOWER:M_PROBE;
+                    m_uncached[free_id]<=lookup_uncached; m_err[free_id]<=0; m_data[free_id]<=0;
+                    q_miss[lookup_slot]<=free_id; q_state[lookup_slot]<=Q_WAIT;
+                end
+            end
+
+            // Synchronous RAM lookup. Pause reads during installation to avoid
+            // depending on FPGA read-during-write collision semantics.
+            if((!lookup_valid || lookup_fire) && lookup_next>=0 && finish_next<0 && !if_req_kill) begin
+                lookup_valid<=1; lookup_slot<=lookup_next; lookup_pc<=q_pc[lookup_next];
+                lookup_tag0<=tag0[q_pc[lookup_next][6 +:INDEX_BITS]];
+                lookup_tag1<=tag1[q_pc[lookup_next][6 +:INDEX_BITS]];
+                lookup_v0<=v0[q_pc[lookup_next][6 +:INDEX_BITS]];
+                lookup_v1<=v1[q_pc[lookup_next][6 +:INDEX_BITS]];
+                lookup_data0<=data0[q_pc[lookup_next][6 +:INDEX_BITS]];
+                lookup_data1<=data1[q_pc[lookup_next][6 +:INDEX_BITS]];
+                q_state[lookup_next]<=Q_LOOKUP;
+            end
+            if(push) begin
+                q_valid[tail]<=1; q_pc[tail]<=if_req_addr; q_state[tail]<=Q_NEW;
+                q_err[tail]<=0; tail<=next_slot(tail);
+            end
+            if(if_req_kill) begin
+                // No epoch wrap hazard: fills never retain slot pointers. Only
+                // currently valid Q_WAIT slots with a matching live MSHR join.
+                // Accepted lower requests continue/drain even after cancellation.
+                q_valid<=0; count<=0; head<=0; tail<=0; lookup_valid<=0;
+            end
+        end
+    end
+endmodule
+
 
 
 

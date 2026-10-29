@@ -3,6 +3,13 @@
 目前的小程式保留作監測器與指令完成的回歸驗證。正式效能分析從官方 CoreMark 開始，
 維持完整 main 的 PMU 報告，另外保留 benchmark 自己的 timed kernel 計時。
 
+目前後續實驗採用的實板基準是
+[新乘法器、Fetch overlap OFF](COREMARK_BOARD_BASELINE.md)，附新舊原始捕獲與比較。
+
+2026-10-29 的啟用模式已擴充為三個取指槽位與 I-cache/L2 hit-under-miss，
+實作、測試與板上操作見 [FETCH_THREE_SLOTS.md](FETCH_THREE_SLOTS.md)。
+新版已完成實板量測，結果見 [COREMARK_BOARD_FETCH_THREE_SLOTS.md](COREMARK_BOARD_FETCH_THREE_SLOTS.md)。
+
 ## Benchmark 選擇
 
 | 選項 | 本專案的用途 |
@@ -90,7 +97,7 @@ python tools/run_perf.py --port COM5 --baud 115200 --delay 3 --mem build_perf/co
 目前 cache／分支／各類等待統計涵蓋整個 main，含 timed kernel 之外的程式，
 不能直接當成 kernel 自己的等待分布；kernel 的時間差用同映像 A/B 實驗確認。
 
-## 第一個已實作的硬體實驗：取指回應與下一請求交接
+## 取指實驗：同拍交接與三槽位
 
 目前 baseline `if_pending=1` 時不發新請求，命中 I-cache 仍要等回應 handshake 後的
 下一拍才發送下一筆。低 miss rate 與高 frontend_wait 同時存在，因此「增加 cache
@@ -99,15 +106,17 @@ python tools/run_perf.py --port COM5 --baud 115200 --delay 3 --mem build_perf/co
 新參數 `FETCH_OVERLAP_EN`：
 
 - 0：保留 baseline request spacing，預設值仍為 0。
-- 1：在目前回應成功交接的同一拍送出下一筆請求，仍只保留一筆 outstanding fetch。
-  同時 request/response 時，pending 必須保留給新請求。
+- 1：三個有序取指槽位，允許同拍回應與接受新請求；命中可連續查詢，
+  不同 line 可在 I-cache／L2 查詢與主回填之間重疊。詳見三槽位設計文件。
+  先前僅保留一筆 outstanding 的同拍版本已被此模式取代。
 
 實驗也暴露出 redirect 與 I-cache response production 同拍的取消邊界問題。
 已讓 kill 在 response 生產當拍有最終優先權，避免把舊路徑回應送入 pipeline，並新增
 `icache_redirect_race_tb` 覆蓋生產邊界、held response 取消與改向後正常取指。
 
 `performance_monitor` 的 `0x40010010` 寫入仍是 ARM/CLEAR；讀取回傳 feature flags，
-bit0 表示 overlap。這個位址在舊 PMU 可讀且回傳 0，新 firmware 與舊 bitstream 相容。
+bit0 表示 overlap，bit1 表示三槽位與 L2 hit-under-miss，新啟用模式為 `0x3`。
+這個位址在舊 PMU 可讀且回傳 0，新 firmware 與舊 bitstream 相容。
 原 schema=1 的報告允許可選 `features` 欄位，舊紀錄仍可解析。
 
 對於正式 A/B，兩版使用相同的更新後 RTL／redirect 修正，只切換 overlap 參數。
@@ -123,7 +132,7 @@ python tools/compare_coremark.py <baseline的JSON完整路徑> <overlap的JSON�
 ```
 
 工具要求相同映像 SHA256、頻率、I/D/L2 容量、官方 seed/data 配置、CRC 通過，
-且硬體 flags 只差 bit0。預設要求兩次 timed kernel 都至少 10 秒。
+且硬體 flags 只差取指設定（舊模式 bit0，三槽模式 bit0+bit1）。預設要求兩次 timed kernel 都至少 10 秒。
 自動校準可能選不同迭代次數，使用 `kernel_time/iterations` 正規化，不能直接比總秒數。
 若更改頻率，應另做系統級比較，使用 `time=cycles/frequency`，不能只拿 CPI 當速度。
 
